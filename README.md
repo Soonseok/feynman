@@ -62,7 +62,7 @@
 **Backend**
 
 * Java 17
-* Spring Boot (Web, Data JPA, Scheduler)
+* Spring Boot (Web, MyBatis, Scheduler)
 * REST API / GraphQL
 * JUnit5, MockMvc (테스트)
 
@@ -87,8 +87,7 @@
 **Infra & DevOps**
 
 * Docker
-* GitHub Actions (CI/CD)
-* Nginx + HTTPS 배포
+* Jenkins
 
 ---
 
@@ -99,7 +98,7 @@
 * Spring Boot 기반 백엔드 구조 세팅
 * API 모듈 구조 정의 (Interface 설계)
 * DB 스키마 설계 (Raw + 표준화 데이터)
-* 기본 API 모듈 연동 (예: Github API – 이슈/커밋 수집)
+* 기본 API 모듈 연동
 
 ### **2주차 – 집계 및 변환**
 
