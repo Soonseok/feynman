@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class ArpltnStatsResponse {
+    private Long id;
     private String stationName;
     private LocalDate measurementDate;
     private double so2;

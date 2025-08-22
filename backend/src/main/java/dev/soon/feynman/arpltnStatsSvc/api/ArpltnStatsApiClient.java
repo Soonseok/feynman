@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 실제로 외부 API에 HTTP 요청을 보내는 로직을 담고 있음
@@ -21,21 +23,32 @@ public class ArpltnStatsApiClient implements ArpltnStatsApi{
     @Value("${api.airkorea.endpoint}")
     private String endpoint;
 
-    @Value("${api.airkorea.service-key}")
+    @Value("${api.airkorea.service-key-encoding}")
     private String serviceKey;
 
     private final RestTemplate restTemplate;
 
     @Override
     public ArpltnStatsApiResponse getArpltnStats(String msrstnName, String inqBginDt, String inqEndDt) {
+        /**
+         * 지금 api 요청 보낼 때 생기는 가장 큰 문제가
+         * String stationName = "%EA%B0%95%EB%82%A8%EA%B5%AC";
+         * 이렇게 보내면 정상적인 회신이 오는데,
+         * String stationName = "강남구";
+         * 이렇게 보내면 java.lang.IllegalArgumentException: Invalid character '강' for QUERY_PARAM in "강남구" 이 에러가 뜸.
+         * 그래서 msrstnName만 수동으로 인코딩 해서 보내기로 함.
+         */
+        String encodedMsrstnName = UriUtils.encode(msrstnName, StandardCharsets.UTF_8);
+
         URI uri = UriComponentsBuilder.fromUriString(endpoint)
                 .queryParam("serviceKey", serviceKey)
                 .queryParam("returnType", "json")
+                .queryParam("numOfRows", 100)
+                .queryParam("pageNo", 1)
                 .queryParam("inqBginDt", inqBginDt)
                 .queryParam("inqEndDt", inqEndDt)
-                .queryParam("msrstnName", msrstnName)
-                .build(false)
-                .encode()
+                .queryParam("msrstnName", encodedMsrstnName)
+                .build(true)
                 .toUri();
         try {
             log.info("API 호출 시작: {}", uri);

@@ -2,6 +2,7 @@ package dev.soon.feynman.arpltnStatsSvc.service;
 
 import dev.soon.feynman.arpltnStatsSvc.api.ArpltnStatsApiClient;
 import dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsApiResponse;
+import dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsApiResponse.Item;
 import dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,18 @@ public class ArpltnStatsServiceImpl implements ArpltnStatsService{
         // API 클라이언트를 호출하여 API 응답(원본 DTO)을 받는다
         ArpltnStatsApiResponse apiResponse = arpltnStatsApiClient.getArpltnStats(msrstnName, inqBginDt, inqEndDt);
 
-        if (apiResponse == null || apiResponse.getItems() == null) {
+        if (apiResponse == null || apiResponse.getResponse() == null || apiResponse.getResponse().getBody() == null) {
+            return Collections.emptyList();
+        }
+
+        List<Item> items = apiResponse.getResponse().getBody().getItems();
+
+        if (items == null) {
             return Collections.emptyList();
         }
 
         // API 응답의 원본 DTO를 우리가 정의한 표준화 DTO로 변환한다
-        return apiResponse.getItems().stream()
+        return items.stream()
                 .map(item -> ArpltnStatsResponse.builder()
                         .stationName(item.getMsrstnName())
                         .measurementDate(LocalDate.parse(item.getMsurDt()))

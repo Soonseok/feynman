@@ -19,15 +19,12 @@ class ArpltnStatsApiClientTest {
 
     @Test
     void getArpltnStatsTest() {
-        // given
         String stationName = "강남구";
-        String startDate = "20231001";
-        String endDate = "20231030";
+        String startDate = "20250810";
+        String endDate = "20250811";
 
-        // when
         ArpltnStatsApiResponse response = client.getArpltnStats(stationName, startDate, endDate);
 
-        // then
         assertNotNull(response);
         System.out.println(response); // 콘솔에 응답 내용 출력
     }
