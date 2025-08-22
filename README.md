@@ -11,23 +11,23 @@
 
 1. **API 데이터 통합**
 
-    * 서로 다른 포맷(JSON, XML 등)을 표준화하여 일관된 구조로 저장한다.
+   * 서로 다른 포맷(JSON, XML 등)을 표준화하여 일관된 구조로 저장한다.
 2. **모듈형 설계**
 
-    * 각 API 수집기를 독립 모듈로 구현하여 새로운 API 추가 시 재사용이 용이하다.
+   * 각 API 수집기를 독립 모듈로 구현하여 새로운 API 추가 시 재사용이 용이하다.
 3. **데이터 집계 및 검색**
 
-    * 통합된 데이터를 기반으로 필터링, 정렬, 통계, 검색이 가능하다.
+   * 통합된 데이터를 기반으로 필터링, 정렬, 통계, 검색이 가능하다.
 4. **통계 분석 확장**
 
-    * 저장된 데이터를 활용하여 **ANOVA, Kruskal-Wallis, Wilcoxon 검정** 등 유의성 검정을 수행한다.
-    * ex1. 환경: 날씨·대기질 → 지역별 공기질 차이에 대해 Kruskal-Wallis 검정  
-      ex2. 교통: 출근시간 교통량 → 주중 vs 주말 차이에 대해 Wilcoxon 검정
-    * 시계열 분석(ARIMA 등), 회귀 분석으로 확장할 수 있다.
+   * 저장된 데이터를 활용하여 **ANOVA, Kruskal-Wallis, Wilcoxon 검정** 등 유의성 검정을 수행한다.
+   * ex1. 환경: 날씨·대기질 → 지역별 공기질 차이에 대해 Kruskal-Wallis 검정  
+     ex2. 교통: 출근시간 교통량 → 주중 vs 주말 차이에 대해 Wilcoxon 검정
+   * 시계열 분석(ARIMA 등), 회귀 분석으로 확장할 수 있다.
 5. **시각화 및 제공**
 
-    * 내부 API와 대시보드를 통해 검색 및 분석 결과를 제공한다.
-    * **PDF 자동 보고서**를 생성하여 결과를 전달한다.
+   * 내부 API와 대시보드를 통해 검색 및 분석 결과를 제공한다.
+   * **PDF 자동 보고서**를 생성하여 결과를 전달한다.
 
 ---
 
@@ -64,7 +64,7 @@
 **Backend**
 
 * Java 17
-* Spring Boot (Web, Data JPA, Scheduler)
+* Spring Boot (Web, MyBatis, Scheduler)
 * REST API / GraphQL
 * JUnit5, MockMvc (테스트)
 
@@ -89,8 +89,7 @@
 **Infra & DevOps**
 
 * Docker
-* GitHub Actions (CI/CD)
-* Nginx + HTTPS 배포
+* Jenkins
 
 ---
 
@@ -101,7 +100,7 @@
 * Spring Boot 기반 백엔드 구조 세팅
 * API 모듈 구조 정의 (Interface 설계)
 * DB 스키마 설계 (Raw + 표준화 데이터)
-* 기본 API 모듈 연동 (예: Github API – 이슈/커밋 수집)
+* 기본 API 모듈 연동
 
 ### **2주차 – 집계 및 변환**
 
