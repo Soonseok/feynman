@@ -1,6 +1,7 @@
 package dev.soon.feynman.arpltnStatsSvc.service;
 
 import dev.soon.feynman.arpltnStatsSvc.api.ArpltnStatsApiClient;
+import dev.soon.feynman.arpltnStatsSvc.dao.ArpltnStatsDao;
 import dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsApiResponse;
 import dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsApiResponse.Item;
 import dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsResponse;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class ArpltnStatsServiceImpl implements ArpltnStatsService{
 
     private final ArpltnStatsApiClient arpltnStatsApiClient;
+    private final ArpltnStatsDao arpltnStatsDao;
 
     @Override
     public List<ArpltnStatsResponse> getArpltnStats(String msrstnName, String inqBginDt, String inqEndDt) {
@@ -37,7 +39,7 @@ public class ArpltnStatsServiceImpl implements ArpltnStatsService{
         }
 
         // API 응답의 원본 DTO를 우리가 정의한 표준화 DTO로 변환한다
-        return items.stream()
+        List<ArpltnStatsResponse> arpltnStatsResponses = items.stream()
                 .map(item -> ArpltnStatsResponse.builder()
                         .stationName(item.getMsrstnName())
                         .measurementDate(LocalDate.parse(item.getMsurDt()))
@@ -49,7 +51,11 @@ public class ArpltnStatsServiceImpl implements ArpltnStatsService{
                         .pm25(Double.parseDouble(item.getPm25Value()))
                         .build())
                 .collect(Collectors.toList());
-        
-        // TODO: 이후 DB 저장 로직 만들어야 함
+
+        for (ArpltnStatsResponse response : arpltnStatsResponses) {
+            arpltnStatsDao.insertArpltnStatsResponse(response);
+        }
+
+        return arpltnStatsResponses;
     }
 }

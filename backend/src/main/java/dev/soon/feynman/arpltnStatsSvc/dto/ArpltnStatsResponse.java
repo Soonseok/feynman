@@ -8,13 +8,13 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class ArpltnStatsResponse {
-    private Long id;
     private String stationName;
     private LocalDate measurementDate;
-    private double so2;
-    private double co;
-    private double o3;
-    private double no2;
-    private double pm10;
-    private double pm25;
+    // 데이터 값 크기는 모두 10
+    private Double so2;         // 아황산가스 평균농도(단위:ppm)
+    private Double co;          // 일산화탄소 평균농도(단위:ppm)
+    private Double o3;          // 오존 평균농도(단위:ppm)
+    private Double no2;         // 이산화질소 평균농도(단위:ppm)
+    private Double pm10;        // 미세먼지 평균농도(단위:ug/m3)
+    private Double pm25;        // 초미세먼지 평균농도(단위:ug/m3)
 }

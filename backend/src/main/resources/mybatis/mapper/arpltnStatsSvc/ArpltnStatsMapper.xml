@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.soon.feynman.arpltnStatsSvc.dao.ArpltnStatsDao">
+
+    <select id="getAllArpltnStatsResponse" resultType="dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsResponse">
+        SELECT id, station_name, measurement_date, so2, co, o3, no2, pm10, pm25
+        FROM air_pollution_stats
+        ORDER BY measurement_date DESC
+    </select>
+
+    <select id="countAllArpltnStatsResponse" resultType="int">
+        SELECT COUNT(*)
+        FROM air_pollution_stats
+    </select>
+
+    <insert id="insertArpltnStatsResponse">
+        INSERT INTO
+            air_pollution_stats(station_name, measurement_date, so2, co, o3, no2, pm10, pm25)
+        VALUES (
+            #{arpltnStatsResponse.stationName},
+            #{arpltnStatsResponse.measurementDate},
+            #{arpltnStatsResponse.so2},
+            #{arpltnStatsResponse.co},
+            #{arpltnStatsResponse.o3},
+            #{arpltnStatsResponse.no2},
+            #{arpltnStatsResponse.pm10},
+            #{arpltnStatsResponse.pm25}
+        )
+    </insert>
+
+</mapper>
