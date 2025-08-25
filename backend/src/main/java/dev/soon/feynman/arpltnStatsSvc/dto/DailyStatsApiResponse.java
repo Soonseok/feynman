@@ -6,11 +6,12 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * 측정소별 일평균 DTO <br/>
  * API 응답을 그대로 매핑
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ArpltnStatsApiResponse {
+public class DailyStatsApiResponse {
 
     private Response response;
 

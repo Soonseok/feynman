@@ -8,7 +8,7 @@ import java.util.List;
  * 서비스 인터페이스 <br/>
  * 모듈이 제공할 비즈니스 로직 명시
  */
-public interface ArpltnStatsService {
+public interface DailyStatsService {
     /**
      * 특정 측정소의 대기 오염 통계 데이터를 조회하고 반환합니다.
      * @param msrstnName 측정소명
@@ -16,5 +16,5 @@ public interface ArpltnStatsService {
      * @param inqEndDt 조회 종료일자 (YYYYMMDD)
      * @return ArpltnStatsResponse 리스트
      */
-    List<ArpltnStatsResponse> getArpltnStats(String msrstnName, String inqBginDt, String inqEndDt);
+    List<ArpltnStatsResponse> getDailyStats(String msrstnName, String inqBginDt, String inqEndDt);
 }
