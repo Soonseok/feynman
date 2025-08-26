@@ -6,7 +6,7 @@
 <mapper namespace="dev.soon.feynman.arpltnStatsSvc.dao.ArpltnStatsDao">
 
     <select id="getAllArpltnStatsResponse" resultType="dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsResponse">
-        SELECT id, station_name, measurement_date, data_type, so2, co, o3, no2, pm10, pm25, khai
+        SELECT id, station_name, measurement_date_time, data_type, so2, co, o3, no2, pm10, pm25, khai
         FROM air_pollution_stats
         ORDER BY measurement_date DESC
     </select>
@@ -16,13 +16,16 @@
         FROM air_pollution_stats
     </select>
 
-    <insert id="insertArpltnStatsResponse">
-        INSERT INTO
-            air_pollution_stats(station_name, data_type, measurement_date, so2, co, o3, no2, pm10, pm25, khai)
-        VALUES (
-            #{arpltnStatsResponse.stationName},
-            #{arpltnStatsResponse.measurementDate},
+    <insert id="insertArpltnStatsResponse" parameterType="dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsResponse">
+        INSERT INTO air_pollution_stats (
+            data_type,
+            station_name,
+            measurement_date_time,
+            so2, co, o3, no2, pm10, pm25, khai
+        ) VALUES (
             #{arpltnStatsResponse.dataType},
+            #{arpltnStatsResponse.stationName},
+            #{arpltnStatsResponse.measurementDateTime},
             #{arpltnStatsResponse.so2},
             #{arpltnStatsResponse.co},
             #{arpltnStatsResponse.o3},
@@ -31,6 +34,14 @@
             #{arpltnStatsResponse.pm25},
             #{arpltnStatsResponse.khai}
         )
+        ON DUPLICATE KEY UPDATE
+            so2 = COALESCE(VALUES(so2), so2),
+            co = COALESCE(VALUES(co), co),
+            o3 = COALESCE(VALUES(o3), o3),
+            no2 = COALESCE(VALUES(no2), no2),
+            pm10 = COALESCE(VALUES(pm10), pm10),
+            pm25 = COALESCE(VALUES(pm25), pm25),
+            khai = COALESCE(VALUES(khai), khai)
     </insert>
 
 </mapper>

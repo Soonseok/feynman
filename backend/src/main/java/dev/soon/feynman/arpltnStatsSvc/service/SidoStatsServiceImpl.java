@@ -9,11 +9,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 고정된 searchCondition 로직 주의. <br/>
+ * dataGubun=DAILY&searchCondition=WEEK로 보내면  <br/>
+ * "totalCount": 7, "dataTime": "2025-08-25"~"dataTime": "2025-08-19" 값이 들어오고, <br/>
+ * dataGubun=DAILY&searchCondition=MONTH로 보내면  <br/>
+ * "totalCount": 31, "dataTime": "2025-08-25"~"dataTime": "2025-07-26"이 들어와서 <br/>
+ * 결국 MONTH가 WEEK을 포함해서 상관이 없음. <br/>
+ * 그리고 dataGubun=HOUR는 어차피 searchCondition과 상관없이 똑같은 값인 최근 25개를 가지고 와서 상관이 없음.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -43,10 +53,22 @@ public class SidoStatsServiceImpl implements SidoStatsService {
 
         for (SidoStatsApiResponse.Item item : items) {
             LocalDateTime measurementDateTime = null;
+            String dataGubunValue = dataGubun.toLowerCase();
+
             try {
-                measurementDateTime = LocalDateTime.parse(item.getDataTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                if ("daily".equals(dataGubunValue)) {
+                    measurementDateTime = LocalDate.parse(item.getDataTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+                } else if ("hour".equals(dataGubunValue)) {
+                    measurementDateTime = LocalDateTime.parse(item.getDataTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                }
             } catch (Exception e) {
                 log.error("Failed to parse date from item: {}", item.getDataTime(), e);
+                // 날짜 파싱 실패 시 현재 아이템은 일단 건너 뜀.
+                // TODO: 실패한 데이터를 관리하고 재처리하는 시스템 구축
+                continue;
+            }
+            if (measurementDateTime == null) {
+                log.warn("measurementDateTime is null after parsing. Skipping item: {}", item);
                 continue;
             }
 
