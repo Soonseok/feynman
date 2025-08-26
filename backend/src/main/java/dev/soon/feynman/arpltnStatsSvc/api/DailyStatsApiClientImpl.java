@@ -11,8 +11,6 @@ import org.springframework.web.util.UriUtils;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 실제로 외부 API에 HTTP 요청을 보내는 로직을 담고 있음
@@ -31,44 +29,7 @@ public class DailyStatsApiClientImpl implements DailyStatsApiClient {
     private final RestTemplate restTemplate;
 
     @Override
-    public DailyStatsApiResponse getDailyStats(String msrstnName, String inqBginDt, String inqEndDt) {
-        int pageNo = 1;
-        int numOfRows = 250;
-
-        DailyStatsApiResponse firstResponse = callApi(msrstnName, inqBginDt, inqEndDt, numOfRows, pageNo);
-        if (firstResponse == null || firstResponse.getResponse() == null) {
-            return null;
-        }
-
-        int totalCount = firstResponse.getResponse().getBody().getTotalCount();
-        int totalPages = (int) Math.ceil((double) totalCount/numOfRows);
-
-        List<DailyStatsApiResponse.Item> allItems = new ArrayList<>();
-
-        if (firstResponse.getResponse().getBody().getItems() != null) {
-            allItems.addAll(firstResponse.getResponse().getBody().getItems());
-        }
-
-        for (int i = 2; i <= totalPages; i++) {
-            DailyStatsApiResponse nextPageResponse = callApi(msrstnName, inqBginDt, inqEndDt, numOfRows, i);
-            if (nextPageResponse != null && nextPageResponse.getResponse().getBody().getItems() != null) {
-                allItems.addAll(nextPageResponse.getResponse().getBody().getItems());
-            }
-        }
-
-        DailyStatsApiResponse finalResponse = new DailyStatsApiResponse();
-        DailyStatsApiResponse.Body body = new DailyStatsApiResponse.Body();
-        body.setItems(allItems);
-        body.setTotalCount(totalCount);
-
-        DailyStatsApiResponse.Response response = new DailyStatsApiResponse.Response();
-        response.setBody(body);
-
-        finalResponse.setResponse(response);
-        return finalResponse;
-    }
-
-    private DailyStatsApiResponse callApi(String msrstnName, String inqBginDt, String inqEndDt, int numOfRows, int pageNo) {
+    public DailyStatsApiResponse callApi(String msrstnName, String inqBginDt, String inqEndDt, int numOfRows, int pageNo) {
         /**
          * 지금 api 요청 보낼 때 생기는 가장 큰 문제가
          * String stationName = "%EA%B0%95%EB%82%A8%EA%B5%AC";
@@ -89,12 +50,13 @@ public class DailyStatsApiClientImpl implements DailyStatsApiClient {
                 .queryParam("msrstnName", encodedMsrstnName)
                 .build(true)
                 .toUri();
+
         try {
-            log.info("API 호출 시작: {}", uri);
+            log.info("DailyStats API 호출 시작: {}", uri);
             return restTemplate.getForObject(uri, DailyStatsApiResponse.class);
         } catch (Exception e) {
-            log.error("API 호출 중 오류 발생: {}", e.getMessage(), e);
-            throw new RuntimeException("API 호출 실패", e);
+            log.error("DailyStats API 호출 중 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("DailyStats API 호출 실패", e);
         }
     }
 }

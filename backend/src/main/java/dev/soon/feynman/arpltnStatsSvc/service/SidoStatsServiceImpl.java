@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -33,24 +36,36 @@ public class SidoStatsServiceImpl implements SidoStatsService {
     private final ArpltnStatsDao arpltnStatsDao;
 
     @Override
-    public List<ArpltnStatsResponse> getSidoStats(String itemCode, String dataGubun, String searchCondition) {
+    public void getSidoStats(String itemCode, String dataGubun, String searchCondition) {
         log.info("Starting sido stats data retrieval for item: {}", itemCode);
+        int numOfRows = 250;
+        int pageNo = 1;
+        SidoStatsApiResponse firstResponse = sidoStatsApiClient.callApi(itemCode, dataGubun, searchCondition, numOfRows, pageNo);
 
-        SidoStatsApiResponse apiResponse = sidoStatsApiClient.getSidoStats(itemCode, dataGubun, searchCondition);
-
-        if (apiResponse == null || apiResponse.getResponse() == null || apiResponse.getResponse().getBody() == null) {
-            log.warn("API response is empty or malformed.");
-            return Collections.emptyList();
+        if (firstResponse == null || firstResponse.getResponse() == null) {
+            log.warn("SidoStatsApiResponse is empty or malformed.");
+            return;
         }
 
-        List<SidoStatsApiResponse.Item> items = apiResponse.getResponse().getBody().getItems();
+        int totalCount = firstResponse.getResponse().getBody().getTotalCount();
+        int totalPages = (int) Math.ceil((double) totalCount/numOfRows);
 
+        processAndSaveItems(firstResponse.getResponse().getBody().getItems(), dataGubun);
+
+        for (int i = 2; i <= totalPages; i++) {
+            SidoStatsApiResponse nextPageResponse = sidoStatsApiClient.callApi(itemCode, dataGubun, searchCondition, numOfRows, i);
+            if (nextPageResponse != null && nextPageResponse.getResponse().getBody().getItems() != null) {
+                processAndSaveItems(nextPageResponse.getResponse().getBody().getItems(), dataGubun);
+            }
+        }
+        log.info("Successfully processed and saved {} sido stats records.", totalCount);
+    }
+
+    public void processAndSaveItems(List<SidoStatsApiResponse.Item> items, String dataGubun) {
         if (items == null) {
-            return Collections.emptyList();
+            return;
         }
-
         Map<String, ArpltnStatsResponse.ArpltnStatsResponseBuilder> builderMap = new HashMap<>();
-
         for (SidoStatsApiResponse.Item item : items) {
             LocalDateTime measurementDateTime = null;
             String dataGubunValue = dataGubun.toLowerCase();
@@ -63,8 +78,6 @@ public class SidoStatsServiceImpl implements SidoStatsService {
                 }
             } catch (Exception e) {
                 log.error("Failed to parse date from item: {}", item.getDataTime(), e);
-                // 날짜 파싱 실패 시 현재 아이템은 일단 건너 뜀.
-                // TODO: 실패한 데이터를 관리하고 재처리하는 시스템 구축
                 continue;
             }
             if (measurementDateTime == null) {
@@ -98,9 +111,6 @@ public class SidoStatsServiceImpl implements SidoStatsService {
         for (ArpltnStatsResponse response : sidoStatsResponses) {
             arpltnStatsDao.insertArpltnStatsResponse(response);
         }
-
-        log.info("Successfully processed and saved {} sido stats records.", sidoStatsResponses.size());
-        return sidoStatsResponses;
     }
 
     private Map<String, String> getCityData(SidoStatsApiResponse.Item item) {

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,22 +24,35 @@ public class MonthlyStatsServiceImpl implements MonthlyStatsService {
     private final ArpltnStatsDao arpltnStatsDao;
 
     @Override
-    public List<ArpltnStatsResponse> getMonthlyStats(String msrstnName, String inqBginMm, String inqEndMm) {
+    public void getMonthlyStats(String msrstnName, String inqBginMm, String inqEndMm) {
         log.info("Starting monthly stats data retrieval for station: {}", msrstnName);
+        int numOfRows = 250;
+        int pageNo = 1;
+        MonthlyStatsApiResponse firstResponse = monthlyStatsApiClient.callApi(msrstnName, inqBginMm, inqEndMm, numOfRows, pageNo);
 
-        MonthlyStatsApiResponse apiResponse = monthlyStatsApiClient.getMonthlyStats(msrstnName, inqBginMm, inqEndMm);
-
-        if (apiResponse == null || apiResponse.getResponse() == null || apiResponse.getResponse().getBody() == null) {
+        if (firstResponse == null || firstResponse.getResponse() == null) {
             log.warn("API response is empty or malformed.");
-            return Collections.emptyList();
+            return;
         }
 
-        List<MonthlyStatsApiResponse.Item> items = apiResponse.getResponse().getBody().getItems();
+        int totalCount = firstResponse.getResponse().getBody().getTotalCount();
+        int totalPages = (int) Math.ceil((double) totalCount/numOfRows);
 
+        processAndSaveItems(firstResponse.getResponse().getBody().getItems());
+
+        for (int i = 2; i <= totalPages; i++) {
+            MonthlyStatsApiResponse nextPageResponse = monthlyStatsApiClient.callApi(msrstnName, inqBginMm, inqEndMm, numOfRows, i);
+            if (nextPageResponse != null && nextPageResponse.getResponse().getBody().getItems() != null) {
+                processAndSaveItems(nextPageResponse.getResponse().getBody().getItems());
+            }
+        }
+        log.info("Successfully processed and saved {} monthly stats records.", totalCount);
+    }
+
+    public void processAndSaveItems(List<MonthlyStatsApiResponse.Item> items) {
         if (items == null) {
-            return Collections.emptyList();
+            return;
         }
-
         List<ArpltnStatsResponse> monthlyStatsResponses = items.stream()
                 .map(item -> {
                     // msurMm 필드를 LocalDateTime으로 변환. (예: "2020-07" -> 2020-07-01 00:00:00)
@@ -69,8 +81,5 @@ public class MonthlyStatsServiceImpl implements MonthlyStatsService {
         for (ArpltnStatsResponse response : monthlyStatsResponses) {
             arpltnStatsDao.insertArpltnStatsResponse(response);
         }
-
-        log.info("Successfully processed and saved {} monthly stats records.", monthlyStatsResponses.size());
-        return monthlyStatsResponses;
     }
 }

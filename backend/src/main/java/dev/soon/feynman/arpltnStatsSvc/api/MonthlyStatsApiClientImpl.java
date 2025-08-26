@@ -26,25 +26,27 @@ public class MonthlyStatsApiClientImpl implements MonthlyStatsApiClient {
     private String serviceKey;
 
     @Override
-    public MonthlyStatsApiResponse getMonthlyStats(String msrstnName, String inqBginMm, String inqEndMm) {
+    public MonthlyStatsApiResponse callApi(String msrstnName, String inqBginMm, String inqEndMm, int numOfRows, int pageNo) {
 
         String encodedMsrstnName = UriUtils.encode(msrstnName, StandardCharsets.UTF_8);
+
         URI uri = UriComponentsBuilder.fromUriString(baseUrl)
                 .queryParam("serviceKey", serviceKey)
                 .queryParam("returnType", "json")
+                .queryParam("numOfRows", numOfRows)
+                .queryParam("pageNo", pageNo)
                 .queryParam("msrstnName", encodedMsrstnName)
                 .queryParam("inqBginMm", inqBginMm)
                 .queryParam("inqEndMm", inqEndMm)
                 .build(true)
                 .toUri();
 
-        log.info("Calling MonthlyStats API with URI: {}", uri);
-
         try {
+            log.info("MonthlyStats API 호출 시작: {}", uri);
             return restTemplate.getForObject(uri, MonthlyStatsApiResponse.class);
         } catch (Exception e) {
-            log.error("Failed to call MonthlyStats API: {}", e.getMessage());
-            throw new RuntimeException("API 호출 실패", e);
+            log.error("MonthlyStats API 호출 중 오류 발생: {}", e.getMessage());
+            throw new RuntimeException("MonthlyStats API 호출 실패", e);
         }
     }
 }

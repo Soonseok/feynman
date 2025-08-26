@@ -1,46 +1,64 @@
 package dev.soon.feynman.arpltnStatsSvc.service;
 
-import dev.soon.feynman.arpltnStatsSvc.api.DailyStatsApiClientImpl;
+import dev.soon.feynman.arpltnStatsSvc.api.DailyStatsApiClient;
 import dev.soon.feynman.arpltnStatsSvc.dao.ArpltnStatsDao;
 import dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsResponse;
 import dev.soon.feynman.arpltnStatsSvc.dto.DailyStatsApiResponse;
-import dev.soon.feynman.arpltnStatsSvc.dto.DailyStatsApiResponse.Item;
 import dev.soon.feynman.config.SafeParseDouble;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * ArpltnStatsApiClient로부터 받은 응답을 처리하는 로직
+ * DailyStatsApiClient로부터 받은 응답을 처리하는 로직
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DailyStatsServiceImpl implements DailyStatsService {
 
-    private final DailyStatsApiClientImpl arpltnStatsApiClient;
+    private final DailyStatsApiClient dailyStatsApiClient;
     private final ArpltnStatsDao arpltnStatsDao;
 
     @Override
-    public List<ArpltnStatsResponse> getDailyStats(String msrstnName, String inqBginDt, String inqEndDt) {
-        // API 클라이언트를 호출하여 API 응답(원본 DTO)을 받는다
-        DailyStatsApiResponse apiResponse = arpltnStatsApiClient.getDailyStats(msrstnName, inqBginDt, inqEndDt);
+    public void getDailyStats(String msrstnName, String inqBginDt, String inqEndDt) {
+        log.info("Starting daily stats data retrieval for station: {}", msrstnName);
+        int numOfRows = 250;
+        int pageNo = 1;
+        DailyStatsApiResponse firstResponse = dailyStatsApiClient.callApi(msrstnName, inqBginDt, inqEndDt, numOfRows, pageNo);
 
-        if (apiResponse == null || apiResponse.getResponse() == null || apiResponse.getResponse().getBody() == null) {
-            return Collections.emptyList();
+        if (firstResponse == null || firstResponse.getResponse() == null) {
+            log.warn("DailyStatsApiResponse is empty or malformed.");
+            return;
         }
 
-        List<Item> items = apiResponse.getResponse().getBody().getItems();
+        int totalCount = firstResponse.getResponse().getBody().getTotalCount();
+        int totalPages = (int) Math.ceil((double) totalCount/numOfRows);
 
+        processAndSaveItems(firstResponse.getResponse().getBody().getItems());
+
+        for (int i = 2; i <= totalPages; i++) {
+            DailyStatsApiResponse nextPageResponse = dailyStatsApiClient.callApi(msrstnName, inqBginDt, inqEndDt, numOfRows, i);
+            if (nextPageResponse != null && nextPageResponse.getResponse().getBody().getItems() != null) {
+                processAndSaveItems(nextPageResponse.getResponse().getBody().getItems());
+            }
+        }
+        log.info("Successfully processed and saved {} daily stats records.", totalCount);
+    }
+
+    /**
+     * API 응답의 원본 DTO를 우리가 정의한 표준화 DTO로 변환한다
+     * @param items
+     */
+    public void processAndSaveItems(List<DailyStatsApiResponse.Item> items) {
         if (items == null) {
-            return Collections.emptyList();
+            return;
         }
-
-        // API 응답의 원본 DTO를 우리가 정의한 표준화 DTO로 변환한다
-        List<ArpltnStatsResponse> arpltnStatsResponses = items.stream()
+        List<ArpltnStatsResponse> dailyStatsResponses = items.stream()
                 .map(item -> ArpltnStatsResponse.builder()
                         .stationName(item.getMsrstnName())
                         .measurementDateTime(LocalDate.parse(item.getMsurDt()).atStartOfDay())
@@ -54,10 +72,8 @@ public class DailyStatsServiceImpl implements DailyStatsService {
                         .build())
                 .collect(Collectors.toList());
 
-        for (ArpltnStatsResponse response : arpltnStatsResponses) {
+        for (ArpltnStatsResponse response : dailyStatsResponses) {
             arpltnStatsDao.insertArpltnStatsResponse(response);
         }
-
-        return arpltnStatsResponses;
     }
 }

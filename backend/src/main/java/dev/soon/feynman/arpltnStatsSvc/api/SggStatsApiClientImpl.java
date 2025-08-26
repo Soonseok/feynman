@@ -26,23 +26,24 @@ public class SggStatsApiClientImpl implements SggStatsApiClient {
     private String serviceKey;
 
     @Override
-    public SggStatsApiResponse getSggStats(String sidoName, String searchCondition) {
+    public SggStatsApiResponse callApi(String sidoName, String searchCondition, int numOfRows, int pageNo) {
         String encodedSidoName = UriUtils.encode(sidoName, StandardCharsets.UTF_8);
         URI uri = UriComponentsBuilder.fromUriString(baseUrl)
                 .queryParam("serviceKey", serviceKey)
                 .queryParam("returnType", "json")
                 .queryParam("sidoName", encodedSidoName)
+                .queryParam("numOfRows", numOfRows)
+                .queryParam("pageNo", pageNo)
                 .queryParam("searchCondition", searchCondition)
                 .build(true)
                 .toUri();
 
-        log.info("Calling SggStats API with URI: {}", uri);
-
         try {
+            log.info("SggStats API 호출 시작: {}", uri);
             return restTemplate.getForObject(uri, SggStatsApiResponse.class);
         } catch (Exception e) {
-            log.error("Failed to call SggStats API: {}", e.getMessage());
-            throw new RuntimeException("API 호출 실패", e);
+            log.error("SggStats API 호출 중 오류 발생: {}", e.getMessage());
+            throw new RuntimeException("SggStats API 호출 실패", e);
         }
     }
 }

@@ -1,4 +1,4 @@
-package dev.soon.feynman.arpltnStatsSvc.service;
+package dev.soon.feynman.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

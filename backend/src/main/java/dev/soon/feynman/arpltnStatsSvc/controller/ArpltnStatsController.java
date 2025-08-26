@@ -21,6 +21,9 @@ public class ArpltnStatsController {
     private final SggStatsService sggStatsService;
     private final SidoStatsService sidoStatsService;
 
+    // 날짜 파싱 실패 시 현재 아이템은 일단 건너 뜀.
+    // TODO: 실패한 데이터를 관리하고 재처리하는 시스템 구축
+
     /**
      * 	측정소별 일평균 정보 조회 <br/>
      * ex) http://localhost:8505/api/v1/arpltn-stats/daily-stats?msrstnName=강남구&inqBginDt=20250824&inqEndDt=20250825

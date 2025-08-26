@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,22 +23,35 @@ public class SggStatsServiceImpl implements SggStatsService {
     private final ArpltnStatsDao arpltnStatsDao;
 
     @Override
-    public List<ArpltnStatsResponse> getSggStats(String sidoName, String searchCondition) {
+    public void getSggStats(String sidoName, String searchCondition) {
         log.info("Starting hourly stats data retrieval for sido: {}", sidoName);
+        int numOfRows = 250;
+        int pageNo = 1;
+        SggStatsApiResponse firstResponse = sggStatsApiClient.callApi(sidoName, searchCondition, numOfRows, pageNo);
 
-        SggStatsApiResponse apiResponse = sggStatsApiClient.getSggStats(sidoName, searchCondition);
-
-        if (apiResponse == null || apiResponse.getResponse() == null || apiResponse.getResponse().getBody() == null) {
-            log.warn("API response is empty or malformed.");
-            throw new RuntimeException("API 응답이 유효하지 않습니다.");
+        if (firstResponse == null || firstResponse.getResponse() == null) {
+            log.warn("SggStatsApiResponse is empty or malformed.");
+            return;
         }
 
-        List<SggStatsApiResponse.Item> items = apiResponse.getResponse().getBody().getItems();
+        int totalCount = firstResponse.getResponse().getBody().getTotalCount();
+        int totalPages = (int) Math.ceil((double) totalCount/numOfRows);
 
+        processAndSaveItems(firstResponse.getResponse().getBody().getItems());
+
+        for (int i = 2; i <= totalPages; i++) {
+            SggStatsApiResponse nextPageResponse = sggStatsApiClient.callApi(sidoName, searchCondition, numOfRows, i);
+            if (nextPageResponse != null && nextPageResponse.getResponse().getBody().getItems() != null) {
+                processAndSaveItems(nextPageResponse.getResponse().getBody().getItems());
+            }
+        }
+        log.info("Successfully processed and saved {} hourly stats records.", totalCount);
+    }
+
+    public void processAndSaveItems(List<SggStatsApiResponse.Item> items) {
         if (items == null) {
-            return Collections.emptyList();
+            return;
         }
-
         List<ArpltnStatsResponse> hourlyStatsResponses = items.stream()
                 .map(item -> {
                     // dataTime 필드를 LocalDateTime으로 변환. (예: "2025-08-22 16:00")
@@ -69,8 +81,5 @@ public class SggStatsServiceImpl implements SggStatsService {
         for (ArpltnStatsResponse response : hourlyStatsResponses) {
             arpltnStatsDao.insertArpltnStatsResponse(response);
         }
-
-        log.info("Successfully processed and saved {} hourly stats records.", hourlyStatsResponses.size());
-        return hourlyStatsResponses;
     }
 }

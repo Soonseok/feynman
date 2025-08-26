@@ -25,7 +25,7 @@ class DailyStatsApiClientImplTest {
         String startDate = "20250810";
         String endDate = "20250811";
 
-        DailyStatsApiResponse response = client.getDailyStats(stationName, startDate, endDate);
+        DailyStatsApiResponse response = client.callApi(stationName, startDate, endDate, 100, 1);
 
         assertNotNull(response);
         System.out.println(response); // 콘솔에 응답 내용 출력

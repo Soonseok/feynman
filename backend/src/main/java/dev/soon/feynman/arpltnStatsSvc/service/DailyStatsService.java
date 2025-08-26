@@ -1,9 +1,5 @@
 package dev.soon.feynman.arpltnStatsSvc.service;
 
-import dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsResponse;
-
-import java.util.List;
-
 /**
  * 서비스 인터페이스 <br/>
  * 모듈이 제공할 비즈니스 로직 명시
@@ -14,7 +10,7 @@ public interface DailyStatsService {
      * @param msrstnName 측정소명
      * @param inqBginDt 조회 시작일자 (YYYYMMDD)
      * @param inqEndDt 조회 종료일자 (YYYYMMDD)
-     * @return ArpltnStatsResponse 리스트
+     * @return
      */
-    List<ArpltnStatsResponse> getDailyStats(String msrstnName, String inqBginDt, String inqEndDt);
+    void getDailyStats(String msrstnName, String inqBginDt, String inqEndDt);
 }

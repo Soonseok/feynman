@@ -12,7 +12,9 @@ public interface DailyStatsApiClient {
      * @param msrstnName 측정소명
      * @param inqBginDt 조회 시작일자 (YYYYMMDD)
      * @param inqEndDt 조회 종료일자 (YYYYMMDD)
+     * @param numOfRows 한 페이지에 출력 되는 결과 수
+     * @param pageNo 현재 페이지 번호
      * @return DailyStatsApiResponse API 응답 객체
      */
-    DailyStatsApiResponse getDailyStats(String msrstnName, String inqBginDt, String inqEndDt);
+    DailyStatsApiResponse callApi(String msrstnName, String inqBginDt, String inqEndDt, int numOfRows, int pageNo);
 }
