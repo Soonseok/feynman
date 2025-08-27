@@ -37,7 +37,7 @@ public class ArpltnDataScheduler {
 
     // 측정 항목 목록을 메모리에 고정 (6개)
     private static final List<String> ITEM_CODES = List.of(
-            "SO2", "CO", "O3", "NO2", "PM10", "PM2.5");
+            "SO2", "CO", "O3", "NO2", "PM10", "PM25");
 
     /**
      * 1. 측정소별 일평균 정보 조회 (2개 조로 나눠서 매일 번갈아 가며 실행)
@@ -135,7 +135,7 @@ public class ArpltnDataScheduler {
                 log.error("API call sleep was interrupted", e);
             }
         }
-        log.info("Daily sido stats job finished.");
+        log.info("Hourly sido stats job finished.");
     }
 
     /**

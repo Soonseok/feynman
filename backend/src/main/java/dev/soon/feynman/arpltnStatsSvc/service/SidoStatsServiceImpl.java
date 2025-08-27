@@ -87,7 +87,7 @@ public class SidoStatsServiceImpl implements SidoStatsService {
 
             Map<String, String> cityData = getCityData(item);
             String itemCodeValue = item.getItemCode();
-            String dataType = item.getDataGubun().equalsIgnoreCase("HOUR") ? "hourly" : "daily";
+            String dataType = dataGubun.equalsIgnoreCase("HOUR") ? "hourly" : "daily";
 
             for (Map.Entry<String, String> entry : cityData.entrySet()) {
                 String cityName = entry.getKey();
