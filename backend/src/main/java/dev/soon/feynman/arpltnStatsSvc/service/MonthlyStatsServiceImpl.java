@@ -7,6 +7,7 @@ import dev.soon.feynman.arpltnStatsSvc.dto.MonthlyStatsApiResponse;
 import dev.soon.feynman.config.SafeParseDouble;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class MonthlyStatsServiceImpl implements MonthlyStatsService {
     private final ArpltnStatsDao arpltnStatsDao;
 
     @Override
+    @Async
     public void getMonthlyStats(String msrstnName, String inqBginMm, String inqEndMm) {
         log.info("Starting monthly stats data retrieval for station: {}", msrstnName);
         int numOfRows = 250;

@@ -7,6 +7,7 @@ import dev.soon.feynman.arpltnStatsSvc.dto.DailyStatsApiResponse;
 import dev.soon.feynman.config.SafeParseDouble;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,6 +26,7 @@ public class DailyStatsServiceImpl implements DailyStatsService {
     private final ArpltnStatsDao arpltnStatsDao;
 
     @Override
+    @Async
     public void getDailyStats(String msrstnName, String inqBginDt, String inqEndDt) {
         log.info("Starting daily stats data retrieval for station: {}", msrstnName);
         int numOfRows = 250;
