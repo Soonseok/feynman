@@ -63,6 +63,7 @@ public class SidoStatsServiceImpl implements SidoStatsService {
 
     public void processAndSaveItems(List<SidoStatsApiResponse.Item> items, String dataGubun) {
         if (items == null) {
+            log.info("SidoStatsApiResponse API에서 가져온 항목이 없습니다.");
             return;
         }
         Map<String, ArpltnStatsResponse.ArpltnStatsResponseBuilder> builderMap = new HashMap<>();
@@ -109,7 +110,12 @@ public class SidoStatsServiceImpl implements SidoStatsService {
                 .collect(Collectors.toList());
 
         for (ArpltnStatsResponse response : sidoStatsResponses) {
-            arpltnStatsDao.insertArpltnStatsResponse(response);
+            try {
+                arpltnStatsDao.insertArpltnStatsResponse(response);
+            } catch (Exception e) {
+                log.error("Failed to insert SidoStatsApiResponse for stationName: {} on date: {}",
+                        response.getStationName(), response.getMeasurementDateTime(), e);
+            }
         }
     }
 

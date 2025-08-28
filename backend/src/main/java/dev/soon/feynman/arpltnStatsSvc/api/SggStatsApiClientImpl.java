@@ -22,7 +22,7 @@ public class SggStatsApiClientImpl implements SggStatsApiClient {
     @Value("${api.airkorea.sgg.endpoint}")
     private String baseUrl;
 
-    @Value("${api.airkorea.service-key-encoding}")
+    @Value("${api.service-key-encoding}")
     private String serviceKey;
 
     @Override

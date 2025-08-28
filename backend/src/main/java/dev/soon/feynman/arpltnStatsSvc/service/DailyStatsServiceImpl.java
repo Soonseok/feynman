@@ -58,6 +58,7 @@ public class DailyStatsServiceImpl implements DailyStatsService {
      */
     public void processAndSaveItems(List<DailyStatsApiResponse.Item> items) {
         if (items == null) {
+            log.info("DailyStatsApiResponse API에서 가져온 항목이 없습니다.");
             return;
         }
         List<ArpltnStatsResponse> dailyStatsResponses = items.stream()
@@ -75,7 +76,12 @@ public class DailyStatsServiceImpl implements DailyStatsService {
                 .collect(Collectors.toList());
 
         for (ArpltnStatsResponse response : dailyStatsResponses) {
-            arpltnStatsDao.insertArpltnStatsResponse(response);
+            try {
+                arpltnStatsDao.insertArpltnStatsResponse(response);
+            } catch (Exception e) {
+                log.error("Failed to insert DailyStatsApiResponse for stationName: {} on date: {}",
+                        response.getStationName(), response.getMeasurementDateTime(), e);
+            }
         }
     }
 }

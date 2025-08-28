@@ -53,6 +53,7 @@ public class MonthlyStatsServiceImpl implements MonthlyStatsService {
 
     public void processAndSaveItems(List<MonthlyStatsApiResponse.Item> items) {
         if (items == null) {
+            log.info("MonthlyStatsApiResponse API에서 가져온 항목이 없습니다.");
             return;
         }
         List<ArpltnStatsResponse> monthlyStatsResponses = items.stream()
@@ -81,7 +82,12 @@ public class MonthlyStatsServiceImpl implements MonthlyStatsService {
                 .collect(Collectors.toList());
 
         for (ArpltnStatsResponse response : monthlyStatsResponses) {
-            arpltnStatsDao.insertArpltnStatsResponse(response);
+            try {
+                arpltnStatsDao.insertArpltnStatsResponse(response);
+            } catch (Exception e) {
+                log.error("Failed to insert MonthlyStatsApiResponse for stationName: {} on date: {}",
+                        response.getStationName(), response.getMeasurementDateTime(), e);
+            }
         }
     }
 }

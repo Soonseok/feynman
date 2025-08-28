@@ -61,9 +61,9 @@ public class ArpltnDataScheduler {
 
         // 요일이 홀수(월,수,금,일)이면 1조, 짝수(화,목,토)이면 2조
         if (dayOfWeek % 2 != 0) {
-            fileName = "/static/stationName1.json";
+            fileName = "static/arpltn/stationName1.json";
         } else {
-            fileName = "/static/stationName2.json";
+            fileName = "/static/arpltn/stationName2.json";
         }
 
         try (InputStream is = getClass().getResourceAsStream(fileName)) {
@@ -98,9 +98,9 @@ public class ArpltnDataScheduler {
         String fileName;
         int dayOfMonth = LocalDate.now().getDayOfMonth();
         if (dayOfMonth == 1) {
-            fileName = "/static/stationName1.json";
+            fileName = "static/arpltn/stationName1.json";
         } else {
-            fileName = "/static/stationName2.json";
+            fileName = "/static/arpltn/stationName2.json";
         }
         try (InputStream is = getClass().getResourceAsStream(fileName)) {
             List<String> stationNames = objectMapper.readValue(is, new TypeReference<>() {});
