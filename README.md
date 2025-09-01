@@ -64,21 +64,28 @@
 **Backend**
 
 * Java 17
-* Spring Boot (Web, MyBatis, Scheduler)
-* REST API / GraphQL
+* Spring Boot 3.5.4
+* REST API
+* GraphQL (spring-boot-starter-graphql 3.5.4)
+* Mybatis (mybatis-spring-boot-starter 3.0.3)
 * JUnit5, MockMvc (테스트)
 
 **Data & Storage**
 
-* MariaDB / PostgreSQL (관계형 데이터 저장)
+* MariaDB 10.6.22
+* PostgreSQL
 * Elasticsearch (검색 최적화)
 * Redis (캐싱)
 
 **Frontend**
 
-* React + TypeScript
+* React 19.1.1
+* TypeScript 5.8.3
+* NodeJs 22.15.0
+* Axios 1.11.0
+* Vite 7.1.3
 * Recharts (데이터 시각화)
-* Chakra-UI 3 (UI 스타일링)
+* Chakra-UI 3.24.2
 
 **Analytics (미정)**
 
@@ -88,6 +95,8 @@
 
 **Infra & DevOps**
 
+* Ubuntu 22.04.5 LTS
+* Maven 3.9.11
 * Docker
 * Jenkins
 
