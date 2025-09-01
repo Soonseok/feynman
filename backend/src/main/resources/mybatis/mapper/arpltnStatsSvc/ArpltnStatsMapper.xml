@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.soon.feynman.arpltnStatsSvc.dao.ArpltnStatsDao">
+
+    <select id="getAllArpltnStatsResponse" resultType="dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsResponse">
+        SELECT id, station_name, measurement_date_time, data_type, so2, co, o3, no2, pm10, pm25, khai
+        FROM air_pollution_stats
+        ORDER BY measurement_date DESC
+    </select>
+
+    <select id="countAllArpltnStatsResponse" resultType="int">
+        SELECT COUNT(*)
+        FROM air_pollution_stats
+    </select>
+
+    <insert id="insertArpltnStatsResponse" parameterType="dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsResponse">
+        INSERT INTO air_pollution_stats (
+            data_type,
+            station_name,
+            measurement_date_time,
+            so2, co, o3, no2, pm10, pm25, khai
+        ) VALUES (
+            #{arpltnStatsResponse.dataType},
+            #{arpltnStatsResponse.stationName},
+            #{arpltnStatsResponse.measurementDateTime},
+            #{arpltnStatsResponse.so2},
+            #{arpltnStatsResponse.co},
+            #{arpltnStatsResponse.o3},
+            #{arpltnStatsResponse.no2},
+            #{arpltnStatsResponse.pm10},
+            #{arpltnStatsResponse.pm25},
+            #{arpltnStatsResponse.khai}
+        )
+        ON DUPLICATE KEY UPDATE
+            so2 = COALESCE(VALUES(so2), so2),
+            co = COALESCE(VALUES(co), co),
+            o3 = COALESCE(VALUES(o3), o3),
+            no2 = COALESCE(VALUES(no2), no2),
+            pm10 = COALESCE(VALUES(pm10), pm10),
+            pm25 = COALESCE(VALUES(pm25), pm25),
+            khai = COALESCE(VALUES(khai), khai)
+    </insert>
+
+</mapper>

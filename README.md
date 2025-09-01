@@ -2,7 +2,7 @@
 
 ## 1. 프로젝트 개요
 
-본 프로젝트는 여러 개의 외부 API 데이터를 모듈화된 방식으로 수집하고, 표준화/저장/집계 과정을 거쳐 사용자에게 \*\*검색·시각화·분석 결과(PDF 포함)\*\*를 제공하는 시스템이다.
+본 프로젝트는 여러 개의 외부 API 데이터를 모듈화된 방식으로 수집하고, 표준화/저장/집계 과정을 거쳐 사용자에게 검색/시각화/분석 결과(PDF 포함)를 제공하는 시스템이다.
 새로운 API를 추가하거나 기존 API를 교체할 때 최소한의 수정으로 확장 가능한 **재사용성 높은 통합 플랫폼**을 목표로 한다.
 
 ---
@@ -64,21 +64,28 @@
 **Backend**
 
 * Java 17
-* Spring Boot (Web, MyBatis, Scheduler)
-* REST API / GraphQL
+* Spring Boot 3.5.4
+* REST API
+* GraphQL (spring-boot-starter-graphql 3.5.4)
+* Mybatis (mybatis-spring-boot-starter 3.0.3)
 * JUnit5, MockMvc (테스트)
 
 **Data & Storage**
 
-* MariaDB / PostgreSQL (관계형 데이터 저장)
+* MariaDB 10.6.22
+* PostgreSQL
 * Elasticsearch (검색 최적화)
 * Redis (캐싱)
 
 **Frontend**
 
-* React + TypeScript
+* React 19.1.1
+* TypeScript 5.8.3
+* NodeJs 22.15.0
+* Axios 1.11.0
+* Vite 7.1.3
 * Recharts (데이터 시각화)
-* TailwindCSS (UI 스타일링)
+* Chakra-UI 3.24.2
 
 **Analytics (미정)**
 
@@ -88,6 +95,8 @@
 
 **Infra & DevOps**
 
+* Ubuntu 22.04.5 LTS
+* Maven 3.9.11
 * Docker
 * Jenkins
 
@@ -111,7 +120,7 @@
 
 ### **3주차 – 검색 및 API 제공**
 
-* 검색 기능 구현 (Spring Data JPA 기반)
+* 검색 기능 구현 (Mybatis 기반)
 * 간단한 인덱싱 및 조회 최적화
 * 자체 API 제공 (/search, /stats 등)
 * React 대시보드 제작 (검색창 + 표/차트)

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.soon.feynman.asosDalyInfoService.dao.AsosInfoDao">
+    <select id="getAllAsosInfoResponse" resultType="dev.soon.feynman.asosDalyInfoService.dto.AsosInfoResponse">
+        SELECT
+            id, measurement_date_time, station_id, station_name, average_temperature, minimum_temperature,
+            maximum_temperature, daily_rainfall, average_wind_speed, maximum_wind_speed, maximum_instantaneous_wind_speed,
+            average_humidity, minimum_humidity, average_sea_level_pressure, daily_sunshine_hours,
+            total_global_solar_radiation, average_cloud_amount, average_soil_temperature_5cm, average_soil_temperature_10cm,
+            average_soil_temperature_20cm, average_soil_temperature_30cm
+        FROM asos_daily_stats
+        ORDER BY measurement_date_time DESC
+    </select>
+
+    <select id="countAllAsosInfoResponse">
+        SELECT COUNT(*)
+        FROM asos_daily_stats
+    </select>
+
+    <insert id="insertAsosInfoResponse" parameterType="dev.soon.feynman.asosDalyInfoService.dto.AsosInfoResponse">
+        INSERT INTO asos_daily_stats(
+            measurement_date_time, station_id, station_name, average_temperature, minimum_temperature,
+            maximum_temperature, daily_rainfall, average_wind_speed, maximum_wind_speed, maximum_instantaneous_wind_speed,
+            average_humidity, minimum_humidity, average_sea_level_pressure, daily_sunshine_hours,
+            total_global_solar_radiation, average_cloud_amount, average_soil_temperature_5cm, average_soil_temperature_10cm,
+            average_soil_temperature_20cm, average_soil_temperature_30cm
+        ) VALUES (
+            #{asosInfoResponse.measurementDateTime}, #{asosInfoResponse.stationId}, #{asosInfoResponse.stationName},
+            #{asosInfoResponse.averageTemperature}, #{asosInfoResponse.minimumTemperature}, #{asosInfoResponse.maximumTemperature},
+            #{asosInfoResponse.dailyRainfall}, #{asosInfoResponse.averageWindSpeed}, #{asosInfoResponse.maximumWindSpeed},
+            #{asosInfoResponse.maximumInstantaneousWindSpeed}, #{asosInfoResponse.averageHumidity}, #{asosInfoResponse.minimumHumidity},
+            #{asosInfoResponse.averageSeaLevelPressure}, #{asosInfoResponse.dailySunshineHours},
+            #{asosInfoResponse.totalGlobalSolarRadiation}, #{asosInfoResponse.averageCloudAmount},
+            #{asosInfoResponse.averageSoilTemperature5cm}, #{asosInfoResponse.averageSoilTemperature10cm},
+            #{asosInfoResponse.averageSoilTemperature20cm}, #{asosInfoResponse.averageSoilTemperature30cm}
+        )
+    </insert>
+</mapper>

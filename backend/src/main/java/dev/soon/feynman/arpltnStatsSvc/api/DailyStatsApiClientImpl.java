@@ -1,6 +1,6 @@
 package dev.soon.feynman.arpltnStatsSvc.api;
 
-import dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsApiResponse;
+import dev.soon.feynman.arpltnStatsSvc.dto.DailyStatsApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,18 +18,18 @@ import java.nio.charset.StandardCharsets;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ArpltnStatsApiClient implements ArpltnStatsApi{
+public class DailyStatsApiClientImpl implements DailyStatsApiClient {
 
-    @Value("${api.airkorea.endpoint}")
+    @Value("${api.airkorea.daily.endpoint}")
     private String endpoint;
 
-    @Value("${api.airkorea.service-key-encoding}")
+    @Value("${api.service-key-encoding}")
     private String serviceKey;
 
     private final RestTemplate restTemplate;
 
     @Override
-    public ArpltnStatsApiResponse getArpltnStats(String msrstnName, String inqBginDt, String inqEndDt) {
+    public DailyStatsApiResponse callApi(String msrstnName, String inqBginDt, String inqEndDt, int numOfRows, int pageNo) {
         /**
          * 지금 api 요청 보낼 때 생기는 가장 큰 문제가
          * String stationName = "%EA%B0%95%EB%82%A8%EA%B5%AC";
@@ -43,19 +43,20 @@ public class ArpltnStatsApiClient implements ArpltnStatsApi{
         URI uri = UriComponentsBuilder.fromUriString(endpoint)
                 .queryParam("serviceKey", serviceKey)
                 .queryParam("returnType", "json")
-                .queryParam("numOfRows", 100)
-                .queryParam("pageNo", 1)
+                .queryParam("numOfRows", numOfRows)
+                .queryParam("pageNo", pageNo)
                 .queryParam("inqBginDt", inqBginDt)
                 .queryParam("inqEndDt", inqEndDt)
                 .queryParam("msrstnName", encodedMsrstnName)
                 .build(true)
                 .toUri();
+
         try {
-            log.info("API 호출 시작: {}", uri);
-            return restTemplate.getForObject(uri, ArpltnStatsApiResponse.class);
+            log.info("DailyStats API 호출 시작: {}", uri);
+            return restTemplate.getForObject(uri, DailyStatsApiResponse.class);
         } catch (Exception e) {
-            log.error("API 호출 중 오류 발생: {}", e.getMessage(), e);
-            return null;
+            log.error("DailyStats API 호출 중 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("DailyStats API 호출 실패", e);
         }
     }
 }
