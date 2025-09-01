@@ -1,0 +1,336 @@
+/**
+ * 01	Application Error	서비스 제공 상태가 원활하지 않습니다
+ * 02	DB Error	서비스 제공 상태가 원활하지 않습니다
+ * 03	No Data	데이터 없음 에러
+ * 04	HTTP Error	서비스 제공 상태가 원활하지 않습니다
+ * 05	service time out	서비스 제공 상태가 원활하지 않습니다
+ * 10	잘못된 요청 파라미터 에러	OpenAPI 요청시 파라미터값 요청이 잘못되었습니다
+ * 11	필수 요청 파라미터 없음	요청하신 OpenAPI의 필수 파라미터가 누락되었습니다
+ * 12	해당 오픈API 서비스가 없거나 폐기됨	OpenAPI 호출시 URL이 잘못됨
+ * 20	서비스 접근 거부	활용 신청하지 않은 OpenAPI 호출
+ * 22	서비스 요청 제한 횟수 초과 에러	하루 트래픽 제한을 초과함
+ * 30	등록하지 않은 서비스키	잘못된 서비스키를 사용하였거나 서비스키를 URL 인코딩하지 않음
+ * 31	서비스키 사용 기간 만료	OpenAPI 사용기간이 만료됨 (활용기간 연장신청 후 사용가능)
+ * 32	등록하지 않은 도메인명 또는 IP주소	활용신청한 서버의 IP와 실제 OpenAPI 호출한 서버가 다를 경우
+ */
+
+
+1 측정소별 실시간 일평균 정보 조회 조회 기간 내 측정소별 실시간 일평균 정보를 조회(최종확정 이전 실시간 데이터만 제공, 최근 약 3~6개월 데이터) 500
+
+요청주소 http://apis.data.go.kr/B552584/ArpltnStatsSvc/getMsrstnAcctoRDyrg
+
+서비스URL http://apis.data.go.kr/B552584/ArpltnStatsSvc
+
+요청변수(Request Parameter)
+
+
+
+항목명(국문) 항목명(영문) 항목크기 항목구분 샘플데이터 항목설명
+
+서비스키 serviceKey 4 필수 인증키(URL Encode) 공공데이터포털에서 받은 인증키
+
+데이터표출방식 returnType 4 옵션 xml xml 또는 json
+
+한 페이지 결과 수 numOfRows 4 옵션 100 한 페이지 결과 수
+
+페이지 번호 pageNo 4 옵션 1 페이지번호
+
+조회시작일 inqBginDt 8 필수 20201001 조회시작일자
+
+조회종료일 inqEndDt 8 필수 20201030 조회종료일자
+
+측정소명 msrstnName 30 옵션 강남구 측정소명
+
+출력결과(Response Element)
+
+
+
+항목명(국문) 항목명(영문) 항목크기 항목구분 샘플데이터 항목설명
+
+결과코드 resultCode 2 필수 00 결과코드
+
+결과메시지 resultMsg 50 필수 NORMAL SERVICE 결과메시지
+
+한 페이지 결과 수 numOfRows 4 필수 10 한 페이지 결과 수
+
+페이지 번호 pageNo 4 필수 1 페이지번호
+
+전체 결과 수 totalCount 4 필수 3 전체 결과 수
+
+목록 items 0 옵션 0 목록
+
+측정일 msurDt 20 필수 2020-10-01 평균자료 조회일
+
+측정소명 msrstnName 10 필수 종로 시군구
+
+아황산가스 평균농도 so2Value 10 필수 0.004 아황산가스 평균농도(단위:ppm)
+
+일산화탄소 평균농도 coValue 10 필수 0.4 일산화탄소 평균농도(단위:ppm)
+
+오존 평균농도 o3Value 10 필수 0.005 오존 평균농도(단위:ppm)
+
+이산화질소 평균농도 no2Value 10 필수 0.027 이산화질소 평균농도(단위:ppm)
+
+미세먼지 평균농도 pm10Value 10 필수 22 미세먼지 평균농도(단위:ug/m3)
+
+초미세먼지 평균농도 pm25Value 10 필수 22 초미세먼지 평균농도(단위:ug/m3)
+
+
+
+2 측정소별 실시간 월평균 정보 조회 조회 기간 내 측정소별 실시간 월평균 정보를 조회(최종확정 이전 실시간 데이터만 제공, 최근 약 3~6개월 데이터) 500
+
+요청주소 http://apis.data.go.kr/B552584/ArpltnStatsSvc/getMsrstnAcctoRMmrg
+
+서비스URL http://apis.data.go.kr/B552584/ArpltnStatsSvc
+
+요청변수(Request Parameter)
+
+
+
+항목명(국문) 항목명(영문) 항목크기 항목구분 샘플데이터 항목설명
+
+서비스키 serviceKey 4 필수 인증키(URL Encode) 공공데이터포털에서 받은 인증키
+
+데이터표출방식 returnType 4 옵션 xml xml 또는 json
+
+한 페이지 결과 수 numOfRows 4 옵션 100 한 페이지 결과 수
+
+페이지 번호 pageNo 4 옵션 1 페이지번호
+
+조회시작월 inqBginMm 8 필수 202007 조회시작월
+
+조회종료월 inqEndMm 8 필수 202010 조회종료월
+
+측정소명 msrstnName 30 옵션 강남구 측정소명
+
+출력결과(Response Element)
+
+
+
+항목명(국문) 항목명(영문) 항목크기 항목구분 샘플데이터 항목설명
+
+결과코드 resultCode 2 필수 00 결과코드
+
+결과메시지 resultMsg 50 필수 NORMAL SERVICE 결과메시지
+
+한 페이지 결과 수 numOfRows 4 필수 100 한 페이지 결과 수
+
+페이지 번호 pageNo 4 필수 1 페이지번호
+
+전체 결과 수 totalCount 4 필수 3 전체 결과 수
+
+목록 items 0 필수 0 목록
+
+측정월 msurMm 20 필수 2020-07 평균자료 조회월
+
+측정소명 msrstnName 10 필수 종로구 시군구
+
+아황산가스 평균농도 so2Value 10 필수 0.003 아황산가스 평균농도(단위:ppm)
+
+일산화탄소 평균농도 coValue 10 필수 0.4 일산화탄소 평균농도(단위:ppm)
+
+오존 평균농도 o3Value 10 필수 0.005 오존 평균농도(단위:ppm)
+
+이산화질소 평균농도 no2Value 10 필수 0.027 이산화질소 평균농도(단위:ppm)
+
+미세먼지 평균농도 pm10Value 10 필수 28 미세먼지 평균농도(단위:ug/m3)
+
+초미세먼지 평균농도 pm25Value 10 필수 17 초미세먼지 평균농도(단위:ug/m3)
+
+
+
+3 시도별 실시간 평균정보 조회 시도별 측정소목록에 대한 일반 항목의 시간 및 일평균 자료 및 지역 평균정보를 제공하는 시도별 실시간 평균정보 조회 500
+
+요청주소 http://apis.data.go.kr/B552584/ArpltnStatsSvc/getCtprvnMesureLIst
+
+서비스URL http://apis.data.go.kr/B552584/ArpltnStatsSvc
+
+요청변수(Request Parameter)
+
+
+
+항목명(국문) 항목명(영문) 항목크기 항목구분 샘플데이터 항목설명
+
+서비스키 serviceKey 4 필 인증키(URL Encode) 공공데이터포털에서 받은 인증키
+
+데이터표출방식 returnType 4 옵 xml xml 또는 json
+
+한 페이지 결과 수 numOfRows 4 옵 100 한 페이지 결과 수
+
+페이지 번호 pageNo 4 옵 1 페이지번호
+
+항목명 itemCode 10 필 PM10 측정항목 구분(SO2, CO, O3, NO2, PM10, PM2.5)
+
+자료 구분 dataGubun 10 필 HOUR 요청 자료 구분(시간평균: HOUR, 일평균: DAILY)
+
+데이터 기간 searchCondition 10 옵 MONTH 요청 데이터 기간(일주일: WEEK, 한달: MONTH)
+
+출력결과(Response Element)
+
+
+
+항목명(국문) 항목명(영문) 항목크기 항목구분 샘플데이터 항목설명
+
+결과코드 resultCode 2 필 00 결과코드
+
+결과메시지 resultMsg 50 필 NORMAL SERVICE 결과메시지
+
+한 페이지 결과 수 numOfRows 4 필 10 한 페이지 결과 수
+
+페이지 번호 pageNo 4 필 1 페이지번호
+
+전체 결과 수 totalCount 4 필 24 전체 결과 수
+
+목록 items 0 옵 - 목록
+
+측정일시 dataTime 20 필 2020-11-13 11:00 평균자료 조회일 연-월-일
+
+조회항목 itemCode 10 필 PM10 조회항목 구분(SO2, CO, O3, NO2, PM10, PM2.5)
+
+조회 자료 구분 dataGubun 10 필 일평균 조회 자료 구분(시간평균, 일평균)
+
+서울 seoul 10 필 44 지역평균
+
+부산 busan 10 필 35 지역평균
+
+대구 daegu 10 필 33 지역평균
+
+인천 incheon 10 필 36 지역평균
+
+광주 gwangju 10 필 22 지역평균
+
+대전 daejeon 10 필 28 지역평균
+
+울산 ulsan 10 필 35 지역평균
+
+경기 gyeonggi 10 필 36 지역평균
+
+강원 gangwon 10 필 32 지역평균
+
+충북 chungbuk 10 필 26 지역평균
+
+충남 chungnam 10 필 30 지역평균
+
+전북 jeonbuk 10 필 28 지역평균
+
+전남 jeonnam 10 필 28 지역평균
+
+경북 gyeongbuk 10 필 30 지역평균
+
+경남 gyeongnam 10 필 38 지역평균
+
+제주 jeju 10 필 27 지역평균
+
+세종 sejong 10 필 31 지역평균
+
+
+
+4 시군구별 실시간 평균정보 조회 시도의 각 시군구별 측정소목록의 일반 항목에 대한 시간대별 평균농도를 제공하는 시군구별 실시간 평균정보 조회 500
+
+요청주소 http://apis.data.go.kr/B552584/ArpltnStatsSvc/getCtprvnMesureSidoLIst
+
+서비스URL http://apis.data.go.kr/B552584/ArpltnStatsSvc
+
+
+
+요청변수(Request Parameter)
+
+
+
+항목명(국문) 항목명(영문) 항목크기 항목구분 샘플데이터 항목설명
+
+서비스키 serviceKey 4 필 - 공공데이터포털에서 받은 인증키
+
+데이터표출방식 returnType 4 옵 xml xml 또는 json
+
+한 페이지 결과 수 numOfRows 4 옵 100 한 페이지 결과 수
+
+페이지 번호 pageNo 4 옵 1 페이지번호
+
+시도 명 sidoName 10 필 서울 시도 이름
+
+데이터 기간 searchCondition 10 필 DAILY 요청 데이터기간
+
+출력결과(Response Element)
+
+
+
+항목명(국문) 항목명(영문) 항목크기 항목구분 샘플데이터 항목설명
+
+결과코드 resultCode 2 필 00 결과코드
+
+결과메시지 resultMsg 50 필 NORMAL SERVICE 결과메시지
+
+한 페이지 결과 수 numOfRows 4 필 100 한 페이지 결과 수
+
+페이지 번호 pageNo 4 필 1 페이지번호
+
+전체 결과 수 totalCount 4 필 24 전체 결과 수
+
+목록 items 0 옵 0 목록
+
+측정일시 dataTime 20 필 2020-11-13 13:00 평균자료 조회일
+
+시도명 sidoName 10 필 서울 시도명
+
+시군구 cityName 10 필 강남구 시군구
+
+시군구 영어이름 cityNameEng 10 필 Gangnam-gu 시군구 영어명
+
+아황산가스 평균농도 so2Value 10 필 0.004 아황산가스 평균농도(단위:ppm)
+
+일산화탄소 평균농도 coValue 10 필 0.4 일산화탄소 평균농도(단위:ppm)
+
+오존 평균농도 o3Value 10 필 0.005 오존 평균농도(단위:ppm)
+
+이산화질소 평균농도 no2Value 10 필 0.027 이산화질소 평균농도(단위:ppm)
+
+미세먼지 평균농도 pm10Value 10 필 28 미세먼지 평균농도(단위:ug/m3)
+
+초미세먼지 평균농도 pm25Value 10 필 17 초미세먼지 평균농도(단위:ug/m3)
+
+===========
+
+이런 상황이야
+
+이 상황에서 DB는 아래와 같이 만들었고,
+
+CREATE TABLE air_pollution_stats (
+
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    data_type VARCHAR(50) NOT NULL,
+
+    station_name VARCHAR(255) NOT NULL,
+
+    measurement_date_time DATETIME NOT NULL,
+
+    so2 DOUBLE,
+
+    co DOUBLE,
+
+    o3 DOUBLE,
+
+    no2 DOUBLE,
+
+    pm10 DOUBLE,
+
+    pm25 DOUBLE,
+
+    khai DOUBLE,
+
+    UNIQUE KEY unique_station_time (station_name, measurement_date_time, data_type)
+
+);
+
+통합 혹은 표준화 DTO, DB에 기록하는 형태로 값을 재구성 하는 DTO는 아래와 같이 만들었지.
+
+/**
+
+* 표준화 DTO <br/>
+
+* API 응답을 그대로 매핑하는 DTO를 각 Service 메서드가 이 DTO 형태로 바꿔줌<br/>
+
+* 이 형태를 DB에 기록
+
+*/

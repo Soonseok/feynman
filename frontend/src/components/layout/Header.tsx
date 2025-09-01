@@ -1,7 +1,6 @@
-import { Flex, Spacer, Box } from "@chakra-ui/react";
-import LogoutButton from "../auth/LogoutButton";
-import { ColorModeButton } from "../ui/color-mode";
-import { Center } from "@chakra-ui/react";
+import { Flex, Spacer } from "@chakra-ui/react";
+// import { ColorModeButton } from "../ui/color-mode";
+// import { Center } from "@chakra-ui/react";
 import { HeaderLogoHome } from "./HeaderLogo";
 
 export default function Header() {
@@ -16,12 +15,9 @@ export default function Header() {
     >
       <HeaderLogoHome />
       <Spacer />
-      <Box px={3}>
-        <LogoutButton />
-      </Box>
-      <Center py={4}>
+      {/* <Center py={4}>
         <ColorModeButton />
-      </Center>
+      </Center> */}
     </Flex>
   );
 }
