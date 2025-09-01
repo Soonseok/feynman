@@ -43,7 +43,7 @@ public class AsosApiClientTest {
 
     public String getStationNameFromStnIds(String stnIds) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("static/asos/asos_stations.json")) {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("static/api_files/asos/asos_stations.json")) {
             if (is == null) {
                 throw new IOException("File not found in classpath: static/asos/asos_stations.json");
             }
