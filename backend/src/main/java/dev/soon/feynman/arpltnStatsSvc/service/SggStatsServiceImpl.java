@@ -50,6 +50,7 @@ public class SggStatsServiceImpl implements SggStatsService {
 
     public void processAndSaveItems(List<SggStatsApiResponse.Item> items) {
         if (items == null) {
+            log.info("SggStatsApiResponse API에서 가져온 항목이 없습니다.");
             return;
         }
         List<ArpltnStatsResponse> hourlyStatsResponses = items.stream()
@@ -79,7 +80,12 @@ public class SggStatsServiceImpl implements SggStatsService {
                 .collect(Collectors.toList());
 
         for (ArpltnStatsResponse response : hourlyStatsResponses) {
-            arpltnStatsDao.insertArpltnStatsResponse(response);
+            try {
+                arpltnStatsDao.insertArpltnStatsResponse(response);
+            } catch (Exception e) {
+                log.error("Failed to insert SggStatsApiResponse for stationName: {} on date: {}",
+                        response.getStationName(), response.getMeasurementDateTime(), e);
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ package dev.soon.feynman.arpltnStatsSvc.service;
  */
 public interface DailyStatsService {
     /**
-     * 특정 측정소의 대기 오염 통계 데이터를 조회하고 반환합니다.
+     * 특정 측정소의 대기 오염 통계 데이터를 조회 및 저장
      * @param msrstnName 측정소명
      * @param inqBginDt 조회 시작일자 (YYYYMMDD)
      * @param inqEndDt 조회 종료일자 (YYYYMMDD)

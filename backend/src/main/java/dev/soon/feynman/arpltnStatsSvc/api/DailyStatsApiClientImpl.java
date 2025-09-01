@@ -23,7 +23,7 @@ public class DailyStatsApiClientImpl implements DailyStatsApiClient {
     @Value("${api.airkorea.daily.endpoint}")
     private String endpoint;
 
-    @Value("${api.airkorea.service-key-encoding}")
+    @Value("${api.service-key-encoding}")
     private String serviceKey;
 
     private final RestTemplate restTemplate;
