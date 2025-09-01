@@ -9,12 +9,12 @@ export default function NotFound() {
       <Text>It seems that you're lost</Text>
       <Link to="/home">
         <Button colorScheme="red" variant={"ghost"}>
-          Go Home &rarr;
+          Go Home(Not Working) &rarr;
         </Button>
       </Link>
       <Link to="/">
         <Button colorScheme="red" variant={"ghost"}>
-          Go Login Page &rarr;
+          Go Main Page &rarr;
         </Button>
       </Link>
       <ColorModeButton />
