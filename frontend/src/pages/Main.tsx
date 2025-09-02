@@ -27,6 +27,11 @@ export default function Main() {
       <Heading>This Page gonna be a Main Page</Heading>
       <Text>But for now, it is just a test page</Text>
       <Text>{data}</Text>
+      <Link to="/test-map">
+        <Button colorScheme="red" variant={"ghost"}>
+          Test Map Page &rarr;
+        </Button>
+      </Link>
       <Link to="/home">
         <Button colorScheme="red" variant={"ghost"}>
           Go Home(Not Working) &rarr;
