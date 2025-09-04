@@ -9,6 +9,7 @@ import Map, { Layer, Source } from "react-map-gl";
 import type { Style } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
+// 우분투 /lib/systemd/system/nginx.service에 환경변수 저장 함
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 //const SIGU_ID = import.meta.env.VITE_SIGU_TILESET_ID; // 시도 경계, source-layer="AL_D001_00_20250804SIG-d0wsd0", zoom extent:9~15
 const UMD_ID = import.meta.env.VITE_UMD_TILESET_ID; // 읍면동 경계, source-layer="AL_D001_00_20250804EMD-0q23o5", zoom extent:9~15
