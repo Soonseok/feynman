@@ -8,14 +8,15 @@
     <select id="getTestData" resultType="dev.soon.feynman.arpltnCallBack.dto.AirQualityData">
         SELECT
             station_name AS sido,
+            station_code as code,
             DATE(measurement_date_time) AS date,
             pm10 AS pm10_value
         FROM air_pollution_stats
         WHERE DATE(measurement_date_time) = '2025-08-01'
-        AND station_name IN (
-        '서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종',
-        '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'
-        )
+<!--        AND station_name IN (-->
+<!--        '서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종',-->
+<!--        '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'-->
+<!--        )-->
     </select>
 
 </mapper>
