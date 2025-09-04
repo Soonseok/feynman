@@ -10,7 +10,7 @@ export default function Header() {
       px={4}
       py={3}
       borderBottom="1px solid"
-      borderColor="gray.200"
+      borderColor="border.inverted"
       align="center"
     >
       <HeaderLogoHome />
