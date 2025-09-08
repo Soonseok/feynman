@@ -1,10 +1,7 @@
 import { Button, Heading, Text, VStack } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { ColorModeButton } from "../components/ui/color-mode";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Header from "../components/layout/Header";
-import Footer from "../components/layout/Footer";
 
 export default function Main() {
     const [data, setData] = useState('')
@@ -23,7 +20,6 @@ export default function Main() {
 
   return (
     <VStack justifyContent={"center"} minH="100vh">
-      <Header />
       <Heading>This Page gonna be a Main Page</Heading>
       <Text>But for now, it is just a test page</Text>
       <Text>{data}</Text>
@@ -37,8 +33,6 @@ export default function Main() {
           Go Home(Not Working) &rarr;
         </Button>
       </Link>
-      <ColorModeButton />
-      <Footer />
     </VStack>
   );
 }

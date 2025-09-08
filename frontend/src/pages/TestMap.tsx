@@ -1,10 +1,7 @@
 import { Box, Button, Text, VStack } from "@chakra-ui/react";
-import Header from "../components/layout/Header";
 import { Heading } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { ColorModeButton } from "../components/ui/color-mode";
-import Footer from "../components/layout/Footer";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Map, {
   Layer,
   Source,
@@ -13,17 +10,10 @@ import Map, {
 } from "react-map-gl";
 import type { MapboxGeoJSONFeature, Style } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import axios from "axios";
 
-// A0 : 숫자 (시도 코드)
-// A1 : 행정구역 코드 (string)
-// A2 : 한글 행정구역 이름
-// A3 : 날짜 비슷한 값
-// A4 : 코드 (중복 느낌)
-
-// 우분투 /lib/systemd/system/nginx.service에 환경변수 저장 함
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
-//const SIGU_ID = import.meta.env.VITE_SIGU_TILESET_ID; // 시도 경계, source-layer="AL_D001_00_20250804SIG-d0wsd0", zoom extent:9~15
-const UMD_ID = import.meta.env.VITE_UMD_TILESET_ID; // 읍면동 경계, source-layer="AL_D001_00_20250804EMD-0q23o5", zoom extent:9~15
+const UMD_ID = import.meta.env.VITE_UMD_TILESET_ID;
 
 const emptyStyle: Style = {
   version: 8,
@@ -33,6 +23,8 @@ const emptyStyle: Style = {
 
 export default function TestMap() {
   const [mousePos, setMousePos] = useState<[number, number] | null>(null);
+  const mapRef = useRef<MapRef | null>(null);
+  const [districtName, setDistrictName] = useState<string | null>(null);
 
   const [hoverInfo, setHoverInfo] = useState<{
     feature: MapboxGeoJSONFeature;
@@ -45,11 +37,37 @@ export default function TestMap() {
     zoom: 9,
   });
 
-  const mapRef = useRef<MapRef | null>(null);
+  // 이전에 보냈던 code 저장
+  const prevCodeRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const currentCode = hoverInfo?.feature?.properties?.A1;
+
+    // 현재 code가 없거나, 이전 code와 같으면 요청 보내지 않음
+    if (!currentCode || currentCode === prevCodeRef.current) {
+      if (!currentCode) {
+        setDistrictName(null);
+      }
+      return;
+    }
+
+    // 이전 code와 다를 경우에만 API 요청
+    axios
+      .get(`/api/v1/arpltn-call/${currentCode}`)
+      .then((res) => {
+        setDistrictName(res.data.station_name);
+      })
+      .catch(() => {
+        setDistrictName(null);
+      })
+      .finally(() => {
+        // 요청이 완료되면 현재 code를 이전 code로 업데이트
+        prevCodeRef.current = currentCode;
+      });
+  }, [hoverInfo]); // hoverInfo가 변경될 때마다 이펙트를 실행
 
   return (
     <VStack justifyContent={"center"} minH="100vh">
-      <Header />
       <Heading>읍면동 경계 지도</Heading>
       <Box
         w="85%"
@@ -65,10 +83,8 @@ export default function TestMap() {
           style={{ width: "100%", height: "100%" }}
           onMove={(evt) => setViewport(evt.viewState)}
           onMouseMove={(e) => {
-            // 1) 마우스 좌표 항상 갱신
             setMousePos(e.lngLat.toArray() as [number, number]);
 
-            // 2) hover 피처 찾기
             const feats = e.features as MapGeoJSONFeature[] | undefined;
             const hovered = feats?.find((f) => f.layer.id === "sigungu");
             setHoverInfo(
@@ -132,11 +148,8 @@ export default function TestMap() {
                   transform="translate(-50%, -120%)"
                   fontSize="sm"
                 >
-                  <Text fontWeight="bold">
-                    {hoverInfo.feature.properties?.A2 /* 예: 구/군 이름 */}
-                  </Text>
-                  <Text>A0: {hoverInfo.feature.properties?.A0}</Text>
-                  <Text>A1: {hoverInfo.feature.properties?.A1}</Text>
+                  <Text fontWeight="bold">{districtName || "정보 없음"}</Text>
+                  <Text>Code: {hoverInfo.feature.properties?.A1}</Text>
                 </Box>
               );
             })()}
@@ -156,8 +169,6 @@ export default function TestMap() {
           Go Main &rarr;
         </Button>
       </Link>
-      <ColorModeButton />
-      <Footer />
     </VStack>
   );
 }

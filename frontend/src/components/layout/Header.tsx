@@ -12,6 +12,12 @@ export default function Header() {
       borderBottom="1px solid"
       borderColor="border.inverted"
       align="center"
+      position="fixed"
+      top={0}
+      left={0}
+      right={0}
+      bg="bg"
+      zIndex={500}
     >
       <HeaderLogoHome />
       <Spacer />

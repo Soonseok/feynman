@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.soon.feynman.arpltnCallBack.dao.GetDistrict">
+    <select id="getDistrictDataByCode" resultType="dev.soon.feynman.arpltnCallBack.dto.DistrictData">
+        SELECT district_code AS districtCode, district_name AS districtName
+        FROM administrative_district
+        WHERE district_code = #{districtCode}
+        LIMIT 1
+    </select>
+
+</mapper>
