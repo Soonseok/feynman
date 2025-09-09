@@ -34,11 +34,22 @@ public class ArpltnCallBackController {
 
     @GetMapping("/{code}")
     public ResponseEntity<Map<String, Object>> getDistrictByCode(@PathVariable String code) {
-        DistrictData data = getDistrict.getDistrictDataByCode(code);
-        if (data != null) {
+        DistrictData districtData = getDistrict.getDistrictDataByCode(code);
+        AirQualityData airQualityData = getArpltnData.getTestDataByCode(code);
+        
+        if (districtData != null) {
             Map<String, Object> res = new HashMap<>();
-            res.put("station_name", data.getDistrictName());
-            res.put("station_code", data.getDistrictCode());
+            res.put("station_name", districtData.getDistrictName());
+            res.put("station_code", districtData.getDistrictCode());
+            if (airQualityData != null) {
+                res.put("pm10_value", String.valueOf(airQualityData.getPm10_value()));
+                res.put("dataType", airQualityData.getDataType());
+                res.put("date", airQualityData.getDate());
+            } else {
+                res.put("pm10_value", "자료 없음");
+                res.put("dataType", "자료 없음");
+                res.put("date", "자료 없음");
+            }
             return ResponseEntity.ok(res);
         } else {
             return ResponseEntity.notFound().build();

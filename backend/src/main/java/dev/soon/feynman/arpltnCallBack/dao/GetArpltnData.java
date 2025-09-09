@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface GetArpltnData {
     List<AirQualityData> getTestData();
+
+    AirQualityData getTestDataByCode(String districtCode);
 }

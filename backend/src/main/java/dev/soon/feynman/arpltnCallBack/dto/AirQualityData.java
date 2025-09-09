@@ -13,6 +13,7 @@ import lombok.Getter;
 public class AirQualityData {
     private String sido;
     private String date;
+    private String dataType;
     private Double pm10_value;
 //    private Double so2_value;
 //    private Double o3_value;

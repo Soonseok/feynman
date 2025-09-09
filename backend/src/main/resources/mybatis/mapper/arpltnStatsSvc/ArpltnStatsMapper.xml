@@ -20,7 +20,6 @@
         INSERT INTO air_pollution_stats (
             data_type,
             station_name,
-            station_code,
             measurement_date_time,
             so2, co, o3, no2, pm10, pm25, khai
         ) VALUES (

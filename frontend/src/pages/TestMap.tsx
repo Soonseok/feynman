@@ -11,6 +11,7 @@ import Map, {
 import type { MapboxGeoJSONFeature, Style } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import axios from "axios";
+import type { StationData } from "../types/airQuality";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const UMD_ID = import.meta.env.VITE_UMD_TILESET_ID;
@@ -24,7 +25,7 @@ const emptyStyle: Style = {
 export default function TestMap() {
   const [mousePos, setMousePos] = useState<[number, number] | null>(null);
   const mapRef = useRef<MapRef | null>(null);
-  const [districtName, setDistrictName] = useState<string | null>(null);
+  const [stationData, setStationData] = useState<StationData | null>(null);
 
   const [hoverInfo, setHoverInfo] = useState<{
     feature: MapboxGeoJSONFeature;
@@ -46,19 +47,19 @@ export default function TestMap() {
     // 현재 code가 없거나, 이전 code와 같으면 요청 보내지 않음
     if (!currentCode || currentCode === prevCodeRef.current) {
       if (!currentCode) {
-        setDistrictName(null);
+        setStationData(null);
       }
       return;
     }
 
     // 이전 code와 다를 경우에만 API 요청
     axios
-      .get(`/api/v1/arpltn-call/${currentCode}`)
+      .get<StationData>(`/api/v1/arpltn-call/${currentCode}`)
       .then((res) => {
-        setDistrictName(res.data.station_name);
+        setStationData(res.data);
       })
       .catch(() => {
-        setDistrictName(null);
+        setStationData(null);
       })
       .finally(() => {
         // 요청이 완료되면 현재 code를 이전 code로 업데이트
@@ -148,8 +149,21 @@ export default function TestMap() {
                   transform="translate(-50%, -120%)"
                   fontSize="sm"
                 >
-                  <Text fontWeight="bold">{districtName || "정보 없음"}</Text>
-                  <Text>Code: {hoverInfo.feature.properties?.A1}</Text>
+                  <VStack align="flex-start" gap={1}>
+                    {/* 💡 stationData 객체에서 필요한 값 사용 */}
+                    <Text fontWeight="bold">
+                      {stationData?.station_name || "정보 없음"}
+                    </Text>
+                    <Text>Code: {hoverInfo.feature.properties?.A1}</Text>
+                    {stationData && (
+                      <>
+                        <Text>측정일: {stationData.date}</Text>
+                        <Text>
+                          PM10 (단위: ㎍/㎥): {stationData.pm10_value}
+                        </Text>
+                      </>
+                    )}
+                  </VStack>
                 </Box>
               );
             })()}

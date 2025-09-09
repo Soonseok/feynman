@@ -19,4 +19,16 @@
 <!--        )-->
     </select>
 
+    <select id="getTestDataByCode" resultType="dev.soon.feynman.arpltnCallBack.dto.AirQualityData">
+        SELECT
+            station_name AS sido,
+            measurement_date_time AS date,
+            data_type AS dataType,
+            pm10 AS pm10_value
+        FROM air_pollution_stats
+        WHERE station_code=#{districtCode}
+        ORDER BY measurement_date_time DESC
+        LIMIT 1
+    </select>
+
 </mapper>
