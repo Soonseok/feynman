@@ -1,5 +1,5 @@
 import { Flex, Spacer } from "@chakra-ui/react";
-// import { ColorModeButton } from "../ui/color-mode";
+import { ColorModeButton } from "../ui/color-mode";
 // import { Center } from "@chakra-ui/react";
 import { HeaderLogoHome } from "./HeaderLogo";
 
@@ -21,6 +21,7 @@ export default function Header() {
     >
       <HeaderLogoHome />
       <Spacer />
+      <ColorModeButton />
       {/* <Center py={4}>
         <ColorModeButton />
       </Center> */}

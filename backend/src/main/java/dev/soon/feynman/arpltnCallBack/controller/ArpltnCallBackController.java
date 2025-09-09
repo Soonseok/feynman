@@ -5,6 +5,7 @@ import dev.soon.feynman.arpltnCallBack.dao.GetDistrict;
 import dev.soon.feynman.arpltnCallBack.dto.AirQualityData;
 import dev.soon.feynman.arpltnCallBack.dto.ApiResponse;
 import dev.soon.feynman.arpltnCallBack.dto.DistrictData;
+import dev.soon.feynman.arpltnCallBack.dto.TotalArpltnResponseDto;
 import dev.soon.feynman.arpltnCallBack.service.GetArpltnDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,26 +34,19 @@ public class ArpltnCallBackController {
     }
 
     @GetMapping("/{code}")
-    public ResponseEntity<Map<String, Object>> getDistrictByCode(@PathVariable String code) {
+    public ResponseEntity<ApiResponse<TotalArpltnResponseDto>> getDistrictByCode(@PathVariable String code) {
         DistrictData districtData = getDistrict.getDistrictDataByCode(code);
-        AirQualityData airQualityData = getArpltnData.getTestDataByCode(code);
-        
-        if (districtData != null) {
-            Map<String, Object> res = new HashMap<>();
-            res.put("station_name", districtData.getDistrictName());
-            res.put("station_code", districtData.getDistrictCode());
-            if (airQualityData != null) {
-                res.put("pm10_value", String.valueOf(airQualityData.getPm10_value()));
-                res.put("dataType", airQualityData.getDataType());
-                res.put("date", airQualityData.getDate());
-            } else {
-                res.put("pm10_value", "자료 없음");
-                res.put("dataType", "자료 없음");
-                res.put("date", "자료 없음");
-            }
-            return ResponseEntity.ok(res);
-        } else {
+        if (districtData == null) {
             return ResponseEntity.notFound().build();
         }
+        AirQualityData airQualityData = getArpltnData.getTestDataByCode(code);
+        TotalArpltnResponseDto totalArpltnResponseDto = TotalArpltnResponseDto.builder()
+                .stationName(districtData.getDistrictName())
+                .stationCode(districtData.getDistrictCode())
+                .airQualityData(airQualityData)
+                .build();
+
+        ApiResponse<TotalArpltnResponseDto> apiResponse = new ApiResponse<>("Success", 1, totalArpltnResponseDto);
+        return ResponseEntity.ok(apiResponse);
     }
 }

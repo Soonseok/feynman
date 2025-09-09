@@ -11,7 +11,8 @@ import Map, {
 import type { Style } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import axios from "axios";
-import type { StationData, HoverInfo } from "../types";
+import type { HoverInfo } from "../types";
+import type { AirQualityApiResponse } from "../types/ApiResponse";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const UMD_ID = import.meta.env.VITE_UMD_TILESET_ID;
@@ -25,8 +26,9 @@ const emptyStyle: Style = {
 export default function TestMap() {
   const [mousePos, setMousePos] = useState<[number, number] | null>(null);
   const mapRef = useRef<MapRef | null>(null);
-  const [stationData, setStationData] = useState<StationData | null>(null);
+  const [stationData, setStationData] = useState<AirQualityApiResponse | null>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
+  const [fixedHoverInfo, setFixedHoverInfo] = useState<HoverInfo | null>(null);
 
   const [viewport, setViewport] = useState({
     latitude: 37.5,
@@ -50,7 +52,7 @@ export default function TestMap() {
 
     // 이전 code와 다를 경우에만 API 요청
     axios
-      .get<StationData>(`/api/v1/arpltn-call/${currentCode}`)
+      .get<AirQualityApiResponse>(`/api/v1/arpltn-call/${currentCode}`)
       .then((res) => {
         setStationData(res.data);
       })
@@ -79,9 +81,38 @@ export default function TestMap() {
           mapboxAccessToken={MAPBOX_TOKEN}
           style={{ width: "100%", height: "100%" }}
           onMove={(evt) => setViewport(evt.viewState)}
-          onMouseMove={(e) => {
-            setMousePos(e.lngLat.toArray() as [number, number]);
+          // onMouseMove={(e) => {
+          //   setMousePos(e.lngLat.toArray() as [number, number]);
 
+          //   const feats = e.features as MapGeoJSONFeature[] | undefined;
+          //   const hovered = feats?.find((f) => f.layer.id === "sigungu");
+          //   setHoverInfo(
+          //     hovered
+          //       ? {
+          //           feature: hovered,
+          //           lngLat: e.lngLat.toArray() as [number, number],
+          //         }
+          //       : null
+          //   );
+          // }}
+          onClick={(e) => {
+            if (fixedHoverInfo) {
+              // 고정 상태 → 더블클릭 시 해제
+              setFixedHoverInfo(null);
+            } else {
+              // 아직 고정 안 됐으면 클릭 시 고정
+              const feats = e.features as MapGeoJSONFeature[] | undefined;
+              const hovered = feats?.find((f) => f.layer.id === "sigungu");
+              if (hovered) {
+                setFixedHoverInfo({
+                  feature: hovered,
+                  lngLat: e.lngLat.toArray() as [number, number],
+                });
+              }
+            }
+          }}
+          onMouseMove={(e) => {
+            if (fixedHoverInfo) return; // 고정 중이면 hoverInfo 갱신 안 함
             const feats = e.features as MapGeoJSONFeature[] | undefined;
             const hovered = feats?.find((f) => f.layer.id === "sigungu");
             setHoverInfo(
@@ -148,14 +179,17 @@ export default function TestMap() {
                   <VStack align="flex-start" gap={1}>
                     {/* 💡 stationData 객체에서 필요한 값 사용 */}
                     <Text fontWeight="bold">
-                      {stationData?.station_name || "정보 없음"}
+                      {stationData?.data.stationName || "정보 없음"}
                     </Text>
                     <Text>Code: {hoverInfo.feature.properties?.A1}</Text>
                     {stationData && (
                       <>
-                        <Text>측정일: {stationData.date}</Text>
+                        <Text>측정일: {stationData?.data.airQualityData?.date}</Text>
                         <Text>
-                          PM10 (단위: ㎍/㎥): {stationData.pm10_value}
+                          PM10 (단위: ㎍/㎥): {stationData?.data.airQualityData?.pm10_value}
+                        </Text>
+                        <Text>
+                          SO₂ (단위: ppm): {stationData?.data.airQualityData?.so2_value}
                         </Text>
                       </>
                     )}

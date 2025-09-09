@@ -15,10 +15,10 @@ public class AirQualityData {
     private String date;
     private String dataType;
     private Double pm10_value;
-//    private Double so2_value;
-//    private Double o3_value;
-//    private Double co_value;
-//    private Double no2_value;
-//    private Double pm25_value;
-//    private Double khai_value;
+    private Double so2_value;
+    private Double o3_value;
+    private Double co_value;
+    private Double no2_value;
+    private Double pm25_value;
+    private Double khai_value;
 }
