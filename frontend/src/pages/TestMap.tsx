@@ -8,10 +8,10 @@ import Map, {
   type MapGeoJSONFeature,
   type MapRef,
 } from "react-map-gl";
-import type { MapboxGeoJSONFeature, Style } from "mapbox-gl";
+import type { Style } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import axios from "axios";
-import type { StationData } from "../types/airQuality";
+import type { StationData, HoverInfo } from "../types";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const UMD_ID = import.meta.env.VITE_UMD_TILESET_ID;
@@ -26,11 +26,7 @@ export default function TestMap() {
   const [mousePos, setMousePos] = useState<[number, number] | null>(null);
   const mapRef = useRef<MapRef | null>(null);
   const [stationData, setStationData] = useState<StationData | null>(null);
-
-  const [hoverInfo, setHoverInfo] = useState<{
-    feature: MapboxGeoJSONFeature;
-    lngLat: [number, number];
-  } | null>(null);
+  const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
 
   const [viewport, setViewport] = useState({
     latitude: 37.5,
