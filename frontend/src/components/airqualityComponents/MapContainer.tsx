@@ -4,10 +4,10 @@ import Map, {
   type MapGeoJSONFeature,
   type MapRef,
 } from "react-map-gl";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { useCallback } from "react";
 import type { Expression, Style } from "mapbox-gl";
-import type { HoverInfo } from "../../types"; 
+import type { HoverInfo } from "../../types";
 
 const emptyStyle: Style = {
   version: 8,
@@ -20,33 +20,37 @@ const UMD_ID = import.meta.env.VITE_UMD_TILESET_ID;
 const SGG_ID = import.meta.env.VITE_SIGU_TILESET_ID;
 
 interface MapContainerProps {
-  mapType: "umd" | "sgg";
+  mapType: "sgg" | "umd";
   viewport: { latitude: number; longitude: number; zoom: number };
-  onViewportChange: (vp: { latitude: number; longitude: number; zoom: number }) => void;
+  onViewportChange: (vp: {
+    latitude: number;
+    longitude: number;
+    zoom: number;
+  }) => void;
   hoverInfo: HoverInfo | null;
   setHoverInfo: (info: HoverInfo | null) => void;
   fixedHoverInfo: HoverInfo | null;
   setFixedHoverInfo: (info: HoverInfo | null) => void;
   highlightedRegions: string[] | null;
-  mapRef: React.MutableRefObject<MapRef | null>;
+  mapRef: React.RefObject<MapRef | null>;
 }
 
 export default function MapContainer({
   mapType,
   viewport,
   onViewportChange,
-  hoverInfo,
+  //hoverInfo,
   setHoverInfo,
   fixedHoverInfo,
   setFixedHoverInfo,
   highlightedRegions,
   mapRef,
 }: MapContainerProps) {
-  const MAP_ID = mapType === "umd" ? UMD_ID : SGG_ID;
+  const MAP_ID = mapType === "sgg" ? SGG_ID : UMD_ID;
   const SOURCE_LAYER =
-    mapType === "umd"
-      ? "AL_D001_00_20250804EMD-0q23o5"
-      : "AL_D001_00_20250804SIG-d0wsd0";
+    mapType === "sgg"
+    ? "AL_D001_00_20250804SIG-d0wsd0"
+    : "AL_D001_00_20250804EMD-0q23o5";
 
   // Fill color 계산
   const getFillColor = useCallback((): Expression | string => {
@@ -121,6 +125,21 @@ export default function MapContainer({
             }}
           />
         </Source>
+        <Box
+          position="absolute"
+          top="1%"
+          right="1%"
+          bg="bg"
+          p={2.5}
+          opacity={0.8}
+          borderRadius="md"
+          fontSize="sm"
+        >
+          <Text fontWeight="bold" color="fg">
+            현재 줌: {viewport.zoom.toFixed(2)}
+          </Text>
+          <Text color="fg">가능한 줌 범위: 9 ~ 15</Text>
+        </Box>
       </Map>
     </Box>
   );

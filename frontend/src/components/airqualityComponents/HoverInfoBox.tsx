@@ -2,17 +2,24 @@ import { Box, Text, VStack } from "@chakra-ui/react";
 import type { HoverInfo } from "../../types";
 import type { AirQualityApiResponse } from "../../types/ApiResponse";
 import type { MapRef } from "react-map-gl";
+import type { RefObject } from "react";
 
 interface Props {
   hoverInfo: HoverInfo | null;
   stationData: AirQualityApiResponse | null;
-  mapRef: MapRef | null;
+  mapRef: RefObject<MapRef | null>;
 }
 
 export default function HoverInfoBox({ hoverInfo, stationData, mapRef }: Props) {
-  if (!hoverInfo || !mapRef) return null;
+  if (!hoverInfo || !mapRef.current) return null;
 
-  const p = mapRef.project(hoverInfo.lngLat);
+  const p = mapRef.current.project(hoverInfo.lngLat);
+  const container = mapRef.current.getContainer();
+    const rect = container.getBoundingClientRect();
+
+    const left = p.x + rect.left;
+    const top = p.y + rect.top;
+
 
   return (
     <Box
@@ -23,9 +30,9 @@ export default function HoverInfoBox({ hoverInfo, stationData, mapRef }: Props) 
       borderRadius="md"
       boxShadow="md"
       zIndex={10}
-      left={`${p.x}px`}
-      top={`${p.y}px`}
-      transform="translate(-50%, -120%)"
+      left={`${left}px`}
+      top={`${top}px`}
+      transform="translate(-100%, -110%)"
       fontSize="sm"
     >
       <VStack align="flex-start" gap={1}>
