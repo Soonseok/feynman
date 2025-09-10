@@ -1,4 +1,4 @@
-import { Box, Button, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Spacer, Text, VStack } from "@chakra-ui/react";
 import { Heading } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
@@ -8,7 +8,7 @@ import Map, {
   type MapGeoJSONFeature,
   type MapRef,
 } from "react-map-gl";
-import type { Style } from "mapbox-gl";
+import type { Expression, Style } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import axios from "axios";
 import type { HoverInfo } from "../types";
@@ -16,6 +16,7 @@ import type { AirQualityApiResponse } from "../types/ApiResponse";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const UMD_ID = import.meta.env.VITE_UMD_TILESET_ID;
+const SGG_ID = import.meta.env.VITE_SIGU_TILESET_ID;
 
 const emptyStyle: Style = {
   version: 8,
@@ -24,17 +25,53 @@ const emptyStyle: Style = {
 };
 
 export default function TestMap() {
-  const [mousePos, setMousePos] = useState<[number, number] | null>(null);
+  const [mapType, setMapType] = useState("umd");
+  const MAP_ID = mapType === "umd" ? UMD_ID : SGG_ID;
+  const SOURCE_LAYER =
+    mapType === "umd"
+      ? "AL_D001_00_20250804EMD-0q23o5"
+      : "AL_D001_00_20250804SIG-d0wsd0";
+  const [mousePos] = useState<[number, number] | null>(null);
   const mapRef = useRef<MapRef | null>(null);
-  const [stationData, setStationData] = useState<AirQualityApiResponse | null>(null);
+  const [stationData, setStationData] = useState<AirQualityApiResponse | null>(
+    null
+  );
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
   const [fixedHoverInfo, setFixedHoverInfo] = useState<HoverInfo | null>(null);
+  const [highlightedRegions, setHighlightedRegions] = useState<string[] | null>(
+    []
+  );
 
   const [viewport, setViewport] = useState({
     latitude: 37.5,
     longitude: 127,
     zoom: 9,
   });
+
+  useEffect(() => {
+    const fetchCodeList = async () => {
+      try {
+        const response = await axios.get("/api/v1/arpltn-call/have_station");
+        setHighlightedRegions(response.data);
+      } catch {
+        setHighlightedRegions(null);
+      }
+    };
+    fetchCodeList();
+  }, []);
+
+  const getFillColor = () => {
+    if (highlightedRegions?.length === 0 || highlightedRegions === null) {
+      return "#52525b"; // 파란색
+    }
+    return [
+      "match",
+      ["get", "A1"],
+      highlightedRegions,
+      "#60a5fa", // 하이라이트 색상 (예: 빨간색)
+      "#52525b", // 기본 색상 (파란색)
+    ] as Expression;
+  };
 
   // 이전에 보냈던 code 저장
   const prevCodeRef = useRef<string | null>(null);
@@ -70,7 +107,7 @@ export default function TestMap() {
       <Heading>읍면동 경계 지도</Heading>
       <Box
         w="85%"
-        h="60vh"
+        h="85vh"
         borderWidth="3px"
         borderColor="border.inverted"
         borderRadius="md"
@@ -81,20 +118,6 @@ export default function TestMap() {
           mapboxAccessToken={MAPBOX_TOKEN}
           style={{ width: "100%", height: "100%" }}
           onMove={(evt) => setViewport(evt.viewState)}
-          // onMouseMove={(e) => {
-          //   setMousePos(e.lngLat.toArray() as [number, number]);
-
-          //   const feats = e.features as MapGeoJSONFeature[] | undefined;
-          //   const hovered = feats?.find((f) => f.layer.id === "sigungu");
-          //   setHoverInfo(
-          //     hovered
-          //       ? {
-          //           feature: hovered,
-          //           lngLat: e.lngLat.toArray() as [number, number],
-          //         }
-          //       : null
-          //   );
-          // }}
           onClick={(e) => {
             if (fixedHoverInfo) {
               // 고정 상태 → 더블클릭 시 해제
@@ -129,14 +152,14 @@ export default function TestMap() {
           minZoom={9}
           maxZoom={15}
         >
-          <Source id="sigungu-source" type="vector" url={`mapbox://${UMD_ID}`}>
+          <Source id="sigungu-source" type="vector" url={`mapbox://${MAP_ID}`}>
             <Layer
               id="sigungu"
               type="fill"
               source="sigungu-source"
-              source-layer="AL_D001_00_20250804EMD-0q23o5"
+              source-layer={SOURCE_LAYER}
               paint={{
-                "fill-color": "#60a5fa", // 파란색
+                "fill-color": getFillColor(),
                 "fill-opacity": 0.8,
                 "fill-outline-color": "#000",
               }}
@@ -184,13 +207,23 @@ export default function TestMap() {
                     <Text>Code: {hoverInfo.feature.properties?.A1}</Text>
                     {stationData && (
                       <>
-                        <Text>측정일: {stationData?.data.airQualityData?.date}</Text>
-                        <Text>
-                          PM10 (단위: ㎍/㎥): {stationData?.data.airQualityData?.pm10_value}
-                        </Text>
-                        <Text>
-                          SO₂ (단위: ppm): {stationData?.data.airQualityData?.so2_value}
-                        </Text>
+                        {stationData?.data.airQualityData?.date && (
+                          <Text>
+                            측정일: {stationData?.data.airQualityData?.date}
+                          </Text>
+                        )}
+                        {stationData?.data.airQualityData?.pm10_value && (
+                          <Text>
+                            PM10 (단위: ㎍/㎥):{" "}
+                            {stationData?.data.airQualityData?.pm10_value}
+                          </Text>
+                        )}
+                        {stationData?.data.airQualityData?.so2_value && (
+                          <Text>
+                            SO₂ (단위: ppm):{" "}
+                            {stationData?.data.airQualityData?.so2_value}
+                          </Text>
+                        )}
                       </>
                     )}
                   </VStack>

@@ -1,8 +1,10 @@
 import { Box, Center, Icon, Image, Link, Spacer } from "@chakra-ui/react";
 import { useState } from "react";
+import { useColorModeValue } from "../ui/color-mode";
 
 export default function Footer() {
   const [imageError, setImageError] = useState(false);
+  const currentColorMode = useColorModeValue("invert(0)", "invert(1)");
   return (
     <Box
       as="footer"
@@ -30,8 +32,9 @@ export default function Footer() {
         ) : (
           <Image
             src="images/schrodinger-equation.svg"
-            w="9%"
+            w="8%"
             opacity={0.6}
+            style={{ filter: currentColorMode }}
             onError={() => setImageError(true)}
           />
         )}

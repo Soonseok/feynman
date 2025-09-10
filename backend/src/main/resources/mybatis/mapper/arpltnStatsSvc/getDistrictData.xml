@@ -11,4 +11,8 @@
         LIMIT 1
     </select>
 
+    <select id="stationIncludedDistrictCodeList">
+        SELECT DISTINCT(station_code) FROM air_pollution_stats WHERE station_code IS NOT NULL
+    </select>
+
 </mapper>
