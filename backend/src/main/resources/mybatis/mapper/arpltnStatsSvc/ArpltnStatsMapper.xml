@@ -6,7 +6,7 @@
 <mapper namespace="dev.soon.feynman.arpltnStatsSvc.dao.ArpltnStatsDao">
 
     <select id="getAllArpltnStatsResponse" resultType="dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsResponse">
-        SELECT id, station_name, measurement_date_time, data_type, so2, co, o3, no2, pm10, pm25, khai
+        SELECT id, station_name, station_code, measurement_date_time, data_type, so2, co, o3, no2, pm10, pm25, khai
         FROM air_pollution_stats
         ORDER BY measurement_date DESC
     </select>

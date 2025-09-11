@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.soon.feynman.arpltnCallBack.dao.GetArpltnData">
+
+    <select id="getTestData" resultType="dev.soon.feynman.arpltnCallBack.dto.AirQualityData">
+        SELECT
+            station_name AS sido,
+            station_code as code,
+            DATE(measurement_date_time) AS date,
+            pm10 AS pm10_value
+        FROM air_pollution_stats
+        WHERE DATE(measurement_date_time) = '2025-08-01'
+<!--        AND station_name IN (-->
+<!--        '서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종',-->
+<!--        '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'-->
+<!--        )-->
+    </select>
+
+    <select id="getTestDataByCode" resultType="dev.soon.feynman.arpltnCallBack.dto.AirQualityData">
+        SELECT
+            station_name AS sido,
+            measurement_date_time AS date,
+            data_type AS dataType,
+            so2 AS so2_value,
+            co AS co_value,
+            o3 AS o3_value,
+            no2 AS no2_value,
+            pm10 AS pm10_value,
+            pm25 AS pm25_value,
+            khai AS khai_value
+        FROM air_pollution_stats
+        WHERE station_code=#{districtCode}
+        ORDER BY measurement_date_time DESC
+        LIMIT 1
+    </select>
+
+</mapper>

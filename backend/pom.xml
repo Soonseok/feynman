@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.soon</groupId>
 	<artifactId>feynman</artifactId>
-	<version>ONLY_SCHEDULER_1.0</version>
+	<version>MAP_1.0</version>
 	<name>feynman</name>
 	<description>A modular API integration, aggregation, and search system with statistical analysis capabilities.</description>
 	<url/>

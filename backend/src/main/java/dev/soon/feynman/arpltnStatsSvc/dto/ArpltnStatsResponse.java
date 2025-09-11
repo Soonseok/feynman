@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ArpltnStatsResponse {
     private String stationName;
+    private String stationCode;
     private String dataType;    // 측정 방식. 실시간, 일평균, 월평균 등
     private LocalDateTime measurementDateTime;
     // 데이터 값 크기는 모두 10
