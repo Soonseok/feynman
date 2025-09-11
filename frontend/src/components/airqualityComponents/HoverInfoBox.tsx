@@ -10,16 +10,19 @@ interface Props {
   mapRef: RefObject<MapRef | null>;
 }
 
-export default function HoverInfoBox({ hoverInfo, stationData, mapRef }: Props) {
+export default function HoverInfoBox({
+  hoverInfo,
+  stationData,
+  mapRef,
+}: Props) {
   if (!hoverInfo || !mapRef.current) return null;
 
   const p = mapRef.current.project(hoverInfo.lngLat);
   const container = mapRef.current.getContainer();
-    const rect = container.getBoundingClientRect();
+  const rect = container.getBoundingClientRect();
 
-    const left = p.x + rect.left;
-    const top = p.y + rect.top;
-
+  const left = p.x + rect.left;
+  const top = p.y + rect.top;
 
   return (
     <Box
@@ -32,20 +35,37 @@ export default function HoverInfoBox({ hoverInfo, stationData, mapRef }: Props) 
       zIndex={10}
       left={`${left}px`}
       top={`${top}px`}
-      transform="translate(-100%, -110%)"
+      transform="translate(-102%, -102%)"
       fontSize="sm"
     >
       <VStack align="flex-start" gap={1}>
-        <Text fontWeight="bold">{stationData?.data.stationName || "정보 없음"}</Text>
+        <Text fontWeight="bold">
+          {stationData?.data.stationName || "정보 없음"}
+        </Text>
         <Text>Code: {hoverInfo.feature.properties?.A1}</Text>
         {stationData?.data.airQualityData?.date && (
-          <Text>측정일: {stationData.data.airQualityData.date}</Text>
+          <Text>측정일 : {stationData.data.airQualityData.date}</Text>
         )}
         {stationData?.data.airQualityData?.pm10_value && (
-          <Text>PM10: {stationData.data.airQualityData.pm10_value} ㎍/㎥</Text>
+          <Text>PM10 : {stationData.data.airQualityData.pm10_value} ㎍/㎥</Text>
+        )}
+        {stationData?.data.airQualityData?.pm25_value && (
+          <Text>PM2.5 : {stationData.data.airQualityData.pm25_value} ㎍/㎥</Text>
         )}
         {stationData?.data.airQualityData?.so2_value && (
-          <Text>SO₂: {stationData.data.airQualityData.so2_value} ppm</Text>
+          <Text>SO₂ : {stationData.data.airQualityData.so2_value} ppm</Text>
+        )}
+        {stationData?.data.airQualityData?.o3_value && (
+          <Text>O₃ : {stationData.data.airQualityData.o3_value} ppm</Text>
+        )}
+        {stationData?.data.airQualityData?.no2_value && (
+          <Text>NO₂ : {stationData.data.airQualityData.no2_value} ppm</Text>
+        )}
+        {stationData?.data.airQualityData?.co_value && (
+          <Text>CO : {stationData.data.airQualityData.co_value} ppm</Text>
+        )}
+        {stationData?.data.airQualityData?.khai_value && (
+          <Text>χ : {stationData.data.airQualityData.khai_value}</Text>
         )}
       </VStack>
     </Box>

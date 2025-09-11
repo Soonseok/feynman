@@ -23,7 +23,7 @@ export const HeaderLogoHome = () => {
 
   return (
     <Center mt={0} mb={0}>
-      <Link to="/home">
+      <Link to="/">
         <Image
           src={logoSrc}
           height="40px"

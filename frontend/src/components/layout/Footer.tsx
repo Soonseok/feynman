@@ -1,4 +1,4 @@
-import { Box, Center, Icon, Image, Link, Spacer } from "@chakra-ui/react";
+import { Box, Center, Icon, Image, Link, Spacer, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { useColorModeValue } from "../ui/color-mode";
 
@@ -26,6 +26,8 @@ export default function Footer() {
             </svg>
           </Icon>
         </Link>
+        <Spacer />
+        <Text fontSize={"md"}>𓇋𓄿𓀀𓁷𓏤𓅓𓂝𓈎𓇥𓂋𓊪𓅮𓏏𓏖𓏼</Text>
         <Spacer />
         {imageError ? (
           <span>ħ ∂/∂t |Ψ(t)› = Ĥ|Ψ(t)›</span>

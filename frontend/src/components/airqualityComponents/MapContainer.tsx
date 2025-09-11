@@ -18,9 +18,10 @@ const emptyStyle: Style = {
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const UMD_ID = import.meta.env.VITE_UMD_TILESET_ID;
 const SGG_ID = import.meta.env.VITE_SIGU_TILESET_ID;
+const SIDO_ID = import.meta.env.VITE_SIDO_TILESET_ID;
 
 interface MapContainerProps {
-  mapType: "sgg" | "umd";
+  mapType: "sgg" | "umd" | "sid";
   viewport: { latitude: number; longitude: number; zoom: number };
   onViewportChange: (vp: {
     latitude: number;
@@ -46,11 +47,24 @@ export default function MapContainer({
   highlightedRegions,
   mapRef,
 }: MapContainerProps) {
-  const MAP_ID = mapType === "sgg" ? SGG_ID : UMD_ID;
-  const SOURCE_LAYER =
-    mapType === "sgg"
-    ? "AL_D001_00_20250804SIG-d0wsd0"
-    : "AL_D001_00_20250804EMD-0q23o5";
+  const MAP_CONFIG = {
+    umd: {
+      id: UMD_ID,
+      sourceLayer: "AL_D001_00_20250804EMD-0q23o5",
+      minZoom: 9,
+    },
+    sgg: {
+      id: SGG_ID,
+      sourceLayer: "AL_D001_00_20250804SIG-d0wsd0",
+      minZoom: 9,
+    },
+    sid: {
+      id: SIDO_ID,
+      sourceLayer: "SiDOMap-dornyh",
+      minZoom: 6,
+    }
+  };
+  const {id: MAP_ID, sourceLayer: SOURCE_LAYER, minZoom: MIN_ZOOM} = MAP_CONFIG[mapType];
 
   // Fill color 계산
   const getFillColor = useCallback((): Expression | string => {
@@ -85,7 +99,7 @@ export default function MapContainer({
             setFixedHoverInfo(null);
           } else {
             const feats = e.features as MapGeoJSONFeature[] | undefined;
-            const hovered = feats?.find((f) => f.layer.id === "sigungu");
+            const hovered = feats?.find((f) => f.layer.id === `${mapType}-layer`);
             if (hovered) {
               setFixedHoverInfo({
                 feature: hovered,
@@ -97,7 +111,7 @@ export default function MapContainer({
         onMouseMove={(e) => {
           if (fixedHoverInfo) return;
           const feats = e.features as MapGeoJSONFeature[] | undefined;
-          const hovered = feats?.find((f) => f.layer.id === "sigungu");
+          const hovered = feats?.find((f) => f.layer.id === `${mapType}-layer`);
           setHoverInfo(
             hovered
               ? {
@@ -107,16 +121,17 @@ export default function MapContainer({
               : null
           );
         }}
-        interactiveLayerIds={["sigungu"]}
+        interactiveLayerIds={[`${mapType}-layer`]}
         mapStyle={emptyStyle}
-        minZoom={9}
+        minZoom={MIN_ZOOM}
         maxZoom={15}
       >
-        <Source id="sigungu-source" type="vector" url={`mapbox://${MAP_ID}`}>
+        <Source key={`source-${mapType}`} id={`source-${mapType}`} type="vector" url={`mapbox://${MAP_ID}`}>
           <Layer
-            id="sigungu"
+            key={`layer-${mapType}`}
+            id={`${mapType}-layer`}
             type="fill"
-            source="sigungu-source"
+            source={`source-${mapType}`}
             source-layer={SOURCE_LAYER}
             paint={{
               "fill-color": getFillColor(),
