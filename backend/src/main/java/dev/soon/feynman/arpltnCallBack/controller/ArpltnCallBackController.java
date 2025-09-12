@@ -8,6 +8,7 @@ import dev.soon.feynman.arpltnCallBack.dto.DistrictData;
 import dev.soon.feynman.arpltnCallBack.dto.TotalArpltnResponseDto;
 import dev.soon.feynman.arpltnCallBack.service.GetArpltnDataService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,18 +19,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api/v1/arpltn-call")
 public class ArpltnCallBackController {
 
     private final GetArpltnDataService getArpltnDataService;
     private final GetArpltnData getArpltnData;
     private final GetDistrict getDistrict;
-
-    @GetMapping("/test")
-    public ApiResponse<List<AirQualityData>> testCallBack() {
-        List<AirQualityData> data = getArpltnDataService.getTestDataService();
-        return new ApiResponse<>("Success", data.size(), data);
-    }
 
     @GetMapping("/{code}")
     public ResponseEntity<ApiResponse<TotalArpltnResponseDto>> getDistrictByCode(@PathVariable String code) {

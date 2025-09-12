@@ -9,7 +9,7 @@ import MapContainer from "../components/airqualityComponents/MapContainer";
 import HoverInfoBox from "../components/airqualityComponents/HoverInfoBox";
 import MapChooseRadioBtn from "../components/airqualityComponents/MapChooseRadioBtn";
 
-export default function TestMap() {
+export default function BoundaryMapPage() {
   const [mapType, setMapType] = useState<MapType>("sid");
   const [stationData, setStationData] = useState<AirQualityApiResponse | null>(
     null

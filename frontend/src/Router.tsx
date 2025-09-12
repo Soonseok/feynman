@@ -2,7 +2,7 @@ import { createBrowserRouter, Outlet } from "react-router-dom"
 import NotFound from "./pages/NotFound"
 import Main from "./pages/Main"
 import Home from "./pages/Home"
-import TestMap from "./pages/TestMap"
+import BoundaryMapPage from "./pages/BoundaryMapPage"
 import Header from "./components/layout/Header"
 import Footer from "./components/layout/Footer"
 
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Main /> },
       { path: "home", element: <Home /> },
-      { path: "test-map", element: <TestMap /> },
+      { path: "test-map", element: <BoundaryMapPage /> },
     ],
   },
 ])
