@@ -86,7 +86,6 @@
 * Vite 7.1.3
 * Recharts (데이터 시각화)
 * Chakra-UI 3.24.2
-* Tileserver-GL 5.4.0
 
 **Analytics (미정)**
 
