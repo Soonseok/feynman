@@ -33,14 +33,14 @@ public class ArpltnCallBackController {
         if (districtData == null) {
             return ResponseEntity.notFound().build();
         }
-        AirQualityData airQualityData = getArpltnData.getTestDataByCode(code);
+        AirQualityData airQualityData = getArpltnData.getSpecificDataByCode(code);
         TotalArpltnResponseDto totalArpltnResponseDto = TotalArpltnResponseDto.builder()
                 .stationName(districtData.getDistrictName())
                 .stationCode(districtData.getDistrictCode())
                 .airQualityData(airQualityData)
                 .build();
 
-        ApiResponse<TotalArpltnResponseDto> apiResponse = new ApiResponse<>("Success", 1, totalArpltnResponseDto);
+        ApiResponse<TotalArpltnResponseDto> apiResponse = new ApiResponse<>("Success", 1, 1,totalArpltnResponseDto);
         return ResponseEntity.ok(apiResponse);
     }
 

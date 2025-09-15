@@ -5,21 +5,7 @@
 
 <mapper namespace="dev.soon.feynman.arpltnCallBack.dao.GetArpltnData">
 
-    <select id="getTestData" resultType="dev.soon.feynman.arpltnCallBack.dto.AirQualityData">
-        SELECT
-            station_name AS sido,
-            station_code as code,
-            DATE(measurement_date_time) AS date,
-            pm10 AS pm10_value
-        FROM air_pollution_stats
-        WHERE DATE(measurement_date_time) = '2025-08-01'
-<!--        AND station_name IN (-->
-<!--        '서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종',-->
-<!--        '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'-->
-<!--        )-->
-    </select>
-
-    <select id="getTestDataByCode" resultType="dev.soon.feynman.arpltnCallBack.dto.AirQualityData">
+    <select id="getSpecificDataByCode" resultType="dev.soon.feynman.arpltnCallBack.dto.AirQualityData">
         SELECT
             station_name AS sido,
             measurement_date_time AS date,
@@ -35,6 +21,62 @@
         WHERE station_code=#{districtCode}
         ORDER BY measurement_date_time DESC
         LIMIT 1
+    </select>
+
+    <select id="getNumberOfSimpleSearchedData" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM air_pollution_stats
+        <where>
+            <if test="startDate != null and endDate != null">
+                AND DATE(measurement_date_time) BETWEEN #{startDate} AND #{endDate}
+            </if>
+            <if test="stationName != null">
+                AND station_name = #{stationName}
+            </if>
+            <if test="stationCode != null">
+                AND station_code LIKE #{stationCode}
+            </if>
+            <if test="dataType != null">
+                AND data_type = #{dataType}
+            </if>
+        </where>
+    </select>
+
+    <select id="getSimpleSearchedData" parameterType="java.util.Map" resultType="dev.soon.feynman.arpltnCallBack.dto.AirQualityDataWithStationCode">
+        SELECT
+        station_name AS sido,
+        measurement_date_time AS date,
+        station_code AS stationCode,
+        data_type AS dataType
+        <if test="params.measurementType != null">
+            ,
+            <foreach item="item" collection="params.measurementType" separator=",">
+                <if test="item == 'so2'">so2 AS so2_value</if>
+                <if test="item == 'co'">co AS co_value</if>
+                <if test="item == 'o3'">o3 AS o3_value</if>
+                <if test="item == 'no2'">no2 AS no2_value</if>
+                <if test="item == 'pm10'">pm10 AS pm10_value</if>
+                <if test="item == 'pm25'">pm25 AS pm25_value</if>
+                <if test="item == 'khai'">khai AS khai_value</if>
+            </foreach>
+        </if>
+        FROM air_pollution_stats
+        <where>
+            <if test="params.startDate != null and params.endDate != null">
+                AND DATE(measurement_date_time) BETWEEN #{params.startDate} AND #{params.endDate}
+            </if>
+            <if test="params.stationName != null">
+                AND station_name = #{params.stationName}
+            </if>
+            <if test="params.stationCode != null">
+                AND station_code LIKE #{params.stationCode}
+            </if>
+            <if test="params.dataType != null">
+                AND data_type = #{params.dataType}
+            </if>
+        </where>
+        LIMIT #{startNum}, #{pageSize}
     </select>
 
 </mapper>

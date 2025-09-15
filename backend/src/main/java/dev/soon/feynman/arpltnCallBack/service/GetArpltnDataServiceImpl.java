@@ -15,6 +15,6 @@ public class GetArpltnDataServiceImpl implements GetArpltnDataService{
 
     @Override
     public List<AirQualityData> getTestDataService() {
-        return getArpltnData.getTestData();
+        return null;
     }
 }

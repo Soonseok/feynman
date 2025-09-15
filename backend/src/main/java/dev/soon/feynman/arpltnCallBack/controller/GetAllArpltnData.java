@@ -2,8 +2,8 @@ package dev.soon.feynman.arpltnCallBack.controller;
 
 import dev.soon.feynman.arpltnCallBack.dao.GetArpltnData;
 import dev.soon.feynman.arpltnCallBack.dao.GetDistrict;
-import dev.soon.feynman.arpltnCallBack.dto.ApiResponse;
-import dev.soon.feynman.arpltnCallBack.dto.TotalArpltnResponseDto;
+import dev.soon.feynman.arpltnCallBack.dto.*;
+import dev.soon.feynman.arpltnCallBack.dto.search.PaginatedArpltnResponseDto;
 import dev.soon.feynman.arpltnCallBack.dto.search.SearchCriteriaDto;
 import dev.soon.feynman.arpltnCallBack.service.GetArpltnDataService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +34,11 @@ public class GetAllArpltnData {
      * @return
      */
     @PostMapping("/searchData")
-    public ResponseEntity<ApiResponse<TotalArpltnResponseDto>> searchData(@RequestBody SearchCriteriaDto searchCriteriaDto){
+    public ResponseEntity<ApiResponse<PaginatedArpltnResponseDto>> searchData(
+            @RequestBody SearchCriteriaDto searchCriteriaDto,
+            @RequestParam(defaultValue = "0") int page){
+        int pageSize = 30;
+        int startNum = page * pageSize;
         // 들어온 요청의 파라미터를 DTO에 매칭
         Map<String, Object> params = new HashMap<>();
         searchCriteriaDto.getStartDate().ifPresent(v -> params.put("startDate", v));
@@ -42,8 +48,20 @@ public class GetAllArpltnData {
         searchCriteriaDto.getDataType().ifPresent(v -> params.put("dataType", v));
         searchCriteriaDto.getMeasurementType().ifPresent(v -> params.put("measurementType", v));
         log.info("\n>>> params : {}", params.toString());
-        //mybatis 매퍼 만들고 조회 해야 함
 
-        return null;
-    };
+        Integer numberOfSearchedData = getArpltnData.getNumberOfSimpleSearchedData(params);
+        List<AirQualityDataWithStationCode> searchedDataList = getArpltnData.getSimpleSearchedData(params, startNum, pageSize);
+        List<TotalArpltnResponseDto> totalArpltnResponseDtos = searchedDataList.stream()
+                .map(searchedData -> TotalArpltnResponseDto.builder()
+                        .stationName(searchedData.getSido())
+                        .stationCode(searchedData.getStationCode())
+                        .airQualityData(searchedData)
+                        .build())
+                .collect(Collectors.toList());
+        PaginatedArpltnResponseDto paginatedArpltnResponseDto = PaginatedArpltnResponseDto.builder()
+                .arpltnResponseList(totalArpltnResponseDtos)
+                .build();
+        ApiResponse<PaginatedArpltnResponseDto> returnData =  new ApiResponse<>("Success", searchedDataList.size(), numberOfSearchedData, paginatedArpltnResponseDto);
+        return ResponseEntity.ok(returnData);
+    }
 }
