@@ -7,7 +7,7 @@ import type { HoverInfo, MapType } from "../types";
 import MapContainer from "../components/airqualityComponents/MapContainer";
 import HoverInfoBox from "../components/airqualityComponents/HoverInfoBox";
 import MapChooseRadioBtn from "../components/airqualityComponents/MapChooseRadioBtn";
-import SearchForm from "../components/airqualityComponents/SearchForm";
+import SearchBox from "../components/layout/SearchBox";
 
 export default function BoundaryMapPage() {
   const [mapType, setMapType] = useState<MapType>("sid");
@@ -109,7 +109,7 @@ export default function BoundaryMapPage() {
 
       <Spacer />
       
-      <SearchForm />
+      <SearchBox />
     </VStack>
   );
 }
