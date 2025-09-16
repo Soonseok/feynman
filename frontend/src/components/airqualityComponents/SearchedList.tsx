@@ -1,6 +1,7 @@
 import {
   Badge,
   Box,
+  Button,
   Center,
   Code,
   Grid,
@@ -13,16 +14,24 @@ import {
 import type { ArpltnResponse, SearchResponse } from "../../types";
 import EmptyList from "../ui/empty-list";
 
-interface SearchBoxProps {
+interface SearchedListProps {
   searchedResult: SearchResponse | null;
   isLoading: boolean;
+  isAppending: boolean;
+  onLoadMore: () => void;
 }
 
 export default function SearchedList({
   searchedResult,
   isLoading,
-}: SearchBoxProps) {
-  const hasResults = searchedResult && searchedResult.totalCount > 0;
+  isAppending,
+  onLoadMore,
+}: SearchedListProps) {
+  const hasResults = searchedResult && searchedResult.dataSize > 0;
+  const currentDataCount = searchedResult?.data?.arpltnResponseList.length || 0;
+  const showLoadMoreButton =
+    searchedResult && currentDataCount < searchedResult.dataSize;
+
   return (
     <Box
       p={8}
@@ -134,6 +143,11 @@ export default function SearchedList({
                     )
                   )}
                 </Grid>
+                {showLoadMoreButton && (
+                  <Center mt={4}>
+                    <Button onClick={onLoadMore} loading={isAppending}>더보기</Button>
+                  </Center>
+                )}
               </VStack>
             ) : (
               // Case 2: 데이터가 없을 때

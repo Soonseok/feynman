@@ -14,10 +14,8 @@ import {
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
 import { useForm, Controller } from "react-hook-form";
-import { toaster } from "../ui/toaster";
-import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
-import type { SearchResponse } from "../../types";
+import type { SearchCriteria } from "../../types";
 
 interface SearchFormData {
   startDate: Date | null;
@@ -29,19 +27,15 @@ interface SearchFormData {
 }
 
 interface SearchFormProps {
-  setSearchedResult: (result: SearchResponse | null) => void;
-  setIsLoading: (loading: boolean) => void;
+  onSearch: (criteria: SearchCriteria) => void;
+  isLoading: boolean;
 }
 
 const measurementTypes = ["pm10", "so2", "o3", "co", "no2", "pm25", "khai"];
 const dataTypes = ["", "DAILY", "HOURLY"];
 
-const SearchForm: React.FC<SearchFormProps> = ({setSearchedResult, setIsLoading}) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SearchFormData>({
+const SearchForm: React.FC<SearchFormProps> = ({ onSearch, isLoading }) => {
+  const { control, handleSubmit } = useForm<SearchFormData>({
     defaultValues: {
       startDate: null,
       endDate: null,
@@ -52,53 +46,17 @@ const SearchForm: React.FC<SearchFormProps> = ({setSearchedResult, setIsLoading}
     },
   });
 
-  const onSubmit = async (data: SearchFormData) => {
-    try {
-      setIsLoading(true);
-      setSearchedResult(null);
-
-      const requestData = {
-        startDate: data.startDate?.toISOString().slice(0, 10),
-        endDate: data.endDate?.toISOString().slice(0, 10),
-        stationName: data.stationName || undefined,
-        stationCode: data.stationCode ? `${data.stationCode}%` : undefined,
-        dataType: data.dataType || undefined,
-        measurementType: data.measurementType,
-      };
-
-      if (
-        requestData.measurementType &&
-        !Array.isArray(requestData.measurementType)
-      ) {
-        requestData.measurementType = [requestData.measurementType];
-      }
-
-      const apiUrl = "/api/v1/arpltn-search/searchData";
-
-      const response = await axios.post(apiUrl, requestData);
-      setSearchedResult(response.data);
-
-      toaster.create({
-        title: "검색 성공",
-        description: "데이터를 성공적으로 조회했습니다.",
-        type: "info",
-      });
-    } catch (error) {
-      console.error("API Error:", error);
-      setSearchedResult(null);
-      toaster.create({
-        title: "검색 실패",
-        description: "데이터 조회 중 오류가 발생했습니다.",
-        type: "error",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const onSubmit = (data: SearchFormData) => {
+    const criteria = {
+      startDate: data.startDate?.toISOString().slice(0, 10),
+      endDate: data.endDate?.toISOString().slice(0, 10),
+      stationName: data.stationName || undefined,
+      stationCode: data.stationCode ? `${data.stationCode}%` : undefined,
+      dataType: data.dataType || undefined,
+      measurementType: data.measurementType,
+    };
+    onSearch(criteria);
   };
-
-  const invalidStartDate = !!errors.startDate;
-  const invalidEndDate = !!errors.endDate;
-  const invalidMeasurementType = !!errors.measurementType;
 
   return (
     <Box
@@ -117,7 +75,7 @@ const SearchForm: React.FC<SearchFormProps> = ({setSearchedResult, setIsLoading}
         <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
           <VStack gap={4}>
             {/* 날짜/시간 선택 */}
-            <Field.Root invalid={invalidStartDate}>
+            <Field.Root>
               <Field.Label>시작 날짜</Field.Label>
               <Controller
                 control={control}
@@ -132,11 +90,8 @@ const SearchForm: React.FC<SearchFormProps> = ({setSearchedResult, setIsLoading}
                   />
                 )}
               />
-              {errors.startDate && (
-                <Field.ErrorText>{errors.startDate.message}</Field.ErrorText>
-              )}
             </Field.Root>
-            <Field.Root invalid={invalidEndDate}>
+            <Field.Root>
               <Field.Label>종료 날짜</Field.Label>
               <Controller
                 control={control}
@@ -151,9 +106,6 @@ const SearchForm: React.FC<SearchFormProps> = ({setSearchedResult, setIsLoading}
                   />
                 )}
               />
-              {errors.endDate && (
-                <Field.ErrorText>{errors.endDate.message}</Field.ErrorText>
-              )}
             </Field.Root>
 
             {/* 측정소 정보 입력 */}
@@ -206,7 +158,7 @@ const SearchForm: React.FC<SearchFormProps> = ({setSearchedResult, setIsLoading}
             </Fieldset.Root>
 
             {/* 측정 유형 선택 */}
-            <Fieldset.Root invalid={invalidMeasurementType}>
+            <Fieldset.Root>
               <Fieldset.Legend>측정 유형</Fieldset.Legend>
               <Controller
                 name="measurementType"
@@ -233,15 +185,16 @@ const SearchForm: React.FC<SearchFormProps> = ({setSearchedResult, setIsLoading}
                   </CheckboxGroup>
                 )}
               />
-              {errors.measurementType && (
-                <Field.ErrorText>
-                  {errors.measurementType.message}
-                </Field.ErrorText>
-              )}
             </Fieldset.Root>
 
-            <Button mt={4} colorScheme="blue" type="submit">
-              검색
+            <Button
+              mt={4}
+              colorScheme="blue"
+              type="submit"
+              onClick={handleSubmit(onSubmit)}
+              loading={isLoading}
+            >
+              {isLoading ? "검색 중..." : "검색"}
             </Button>
           </VStack>
         </form>

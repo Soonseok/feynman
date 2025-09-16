@@ -33,3 +33,12 @@ export interface SearchResponse {
     dataSize: number;
     data: SearchResponseData;
 }
+
+export interface SearchCriteria {
+    startDate?: string;
+    endDate?: string;
+    stationName?: string;
+    stationCode?: string;
+    dataType?: string;
+    measurementType?: string[];
+}
