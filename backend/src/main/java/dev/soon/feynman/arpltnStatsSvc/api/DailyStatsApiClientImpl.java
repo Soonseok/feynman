@@ -30,14 +30,6 @@ public class DailyStatsApiClientImpl implements DailyStatsApiClient {
 
     @Override
     public DailyStatsApiResponse callApi(String msrstnName, String inqBginDt, String inqEndDt, int numOfRows, int pageNo) {
-        /**
-         * 지금 api 요청 보낼 때 생기는 가장 큰 문제가
-         * String stationName = "%EA%B0%95%EB%82%A8%EA%B5%AC";
-         * 이렇게 보내면 정상적인 회신이 오는데,
-         * String stationName = "강남구";
-         * 이렇게 보내면 java.lang.IllegalArgumentException: Invalid character '강' for QUERY_PARAM in "강남구" 이 에러가 뜸.
-         * 그래서 msrstnName만 수동으로 인코딩 해서 보내기로 함.
-         */
         String encodedMsrstnName = UriUtils.encode(msrstnName, StandardCharsets.UTF_8);
 
         URI uri = UriComponentsBuilder.fromUriString(endpoint)

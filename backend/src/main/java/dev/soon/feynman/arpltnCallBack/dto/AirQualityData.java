@@ -1,14 +1,16 @@
 package dev.soon.feynman.arpltnCallBack.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.util.Optional;
 
 /**
  * 이 DTO는 실제 데이터를 담음 (예: 서울특별시의 미세먼지 값)<br/>
  */
 @Getter
-@Builder
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class AirQualityData {
     private String sido;

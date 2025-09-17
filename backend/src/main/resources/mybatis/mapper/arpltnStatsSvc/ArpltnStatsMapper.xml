@@ -16,6 +16,18 @@
         FROM air_pollution_stats
     </select>
 
+    <update id="disableSafeUpdates">
+        SET SQL_SAFE_UPDATES = 0;
+    </update>
+
+    <update id="matchStationCode">
+        UPDATE air_pollution_stats aps
+        JOIN station_data sd
+        ON aps.station_name = sd.station_name
+        SET aps.station_code = sd.station_code
+        WHERE aps.station_code IS NULL;
+    </update>
+
     <insert id="insertArpltnStatsResponse" parameterType="dev.soon.feynman.arpltnStatsSvc.dto.ArpltnStatsResponse">
         INSERT INTO air_pollution_stats (
             data_type,

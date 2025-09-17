@@ -13,5 +13,6 @@ import lombok.Getter;
 public class ApiResponse<T> {
     private String status;
     private int totalCount;
+    private int dataSize;
     private T data;
 }

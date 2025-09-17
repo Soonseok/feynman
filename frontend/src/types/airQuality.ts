@@ -16,3 +16,29 @@ export interface StationDetailData {
     stationCode: string;
     airQualityData: AirQualityData | null;
 }
+
+export interface ArpltnResponse {
+    stationName: string;
+    stationCode: string;
+    airQualityData: AirQualityData;
+}
+
+export interface SearchResponseData {
+    arpltnResponseList: ArpltnResponse[];
+}
+
+export interface SearchResponse {
+    status: string;
+    totalCount: number;
+    dataSize: number;
+    data: SearchResponseData;
+}
+
+export interface SearchCriteria {
+    startDate?: string;
+    endDate?: string;
+    stationName?: string;
+    stationCode?: string;
+    dataType?: string;
+    measurementType?: string[];
+}

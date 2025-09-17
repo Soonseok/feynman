@@ -1,5 +1,4 @@
-import { Button, Text, VStack, Heading, Spacer } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Text, VStack, Heading, Spacer } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import type { MapRef } from "react-map-gl";
@@ -8,8 +7,9 @@ import type { HoverInfo, MapType } from "../types";
 import MapContainer from "../components/airqualityComponents/MapContainer";
 import HoverInfoBox from "../components/airqualityComponents/HoverInfoBox";
 import MapChooseRadioBtn from "../components/airqualityComponents/MapChooseRadioBtn";
+import SearchBox from "../components/layout/SearchBox";
 
-export default function TestMap() {
+export default function BoundaryMapPage() {
   const [mapType, setMapType] = useState<MapType>("sid");
   const [stationData, setStationData] = useState<AirQualityApiResponse | null>(
     null
@@ -81,7 +81,10 @@ export default function TestMap() {
 
       {/* 라디오 버튼 컴포넌트를 사용하고 mapType 상태를 props로 전달 */}
       <MapChooseRadioBtn mapType={mapType} setMapType={setMapType} />
-
+      <Text>
+        중심 좌표: {viewport.longitude.toFixed(3)},{" "}
+        {viewport.latitude.toFixed(3)}
+      </Text>
       <Spacer />
 
       {/* MapContainer에 필요한 모든 props를 전달 */}
@@ -105,15 +108,8 @@ export default function TestMap() {
       />
 
       <Spacer />
-      <Text>
-        중심 좌표: {viewport.longitude.toFixed(3)},{" "}
-        {viewport.latitude.toFixed(3)}
-      </Text>
-      <Link to="/">
-        <Button colorScheme="red" variant={"ghost"}>
-          Go Main &rarr;
-        </Button>
-      </Link>
+      
+      <SearchBox />
     </VStack>
   );
 }
