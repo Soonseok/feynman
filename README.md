@@ -1,6 +1,52 @@
-# 1. 개요
+# 1. 개요 (2025.09.17)
+[구현페이지](https://goldilocks-water.duckdns.org/test-map)
 
-이 문서는 대기 오염 정보 조회를 위한 API 엔드포인트들을 설명합니다. 각 엔드포인트는 특정 기능(실시간 데이터 조회, 검색, 통계 데이터 수집)을 수행합니다.
+행정구역 별 대기질 조회 서비스. 행정구역의 단위는 읍면동, 시군구, 17개 광역자치단체를 지원한다.  
+2025년 3월 1일부터의 SO₂, O₃, CO, NO₂, PM10, PM2.5, KHAI 값을 제공.  
+
+## 1.1 기술 스택
+
+**Backend**
+
+* Java 17
+* Spring Boot 3.5.4
+* REST API
+* Mybatis (mybatis-spring-boot-starter 3.0.3)
+
+**Data & Storage**
+
+* MariaDB 10.6.22
+
+**Frontend**
+
+* React 19.1.1
+* TypeScript 5.8.3
+* NodeJs 22.15.0
+* Axios 1.11.0
+* Vite 7.1.3
+* Chakra-UI 3.24.2
+
+**Infra & DevOps**
+
+* Ubuntu 22.04.5 LTS
+* Maven 3.9.11
+
+**경계 지도 구현**
+* 데이터 가공   
+V-WORLD에서 제공하는 .shp(Shapefile) 형식의 공간 데이터를 QGIS를 활용해 필요한 속성과 좌표계를 정제 및 변환.
+* 포맷 변환  
+QGIS에서 .shp 파일을 GeoJSON 형식으로 변환하여 웹에서 효율적으로 사용 가능하도록 최적화.
+* 지도 서비스 연동  
+Mapbox에 GeoJSON 데이터를 업로드하고, 웹 페이지에서 Mapbox GL JS를 통해 지도에 경계 데이터를 렌더링.
+* 최적화  
+세부적인 내용이 필요 없는 시군구 지도와 광역자치단체 지도는 ogr2ogr을 이용해 단순화(Simplification) 적용.
+
+## 1.2 사용 API
+1. [한국환경공단_에어코리아_대기오염통계 현황](https://www.data.go.kr/data/15073855/openapi.do)
+1. [한국환경공단_에어코리아_측정소정보](https://www.data.go.kr/data/15073877/openapi.do)
+1. [국토교통부_행정구역시군구_경계](https://www.vworld.kr/dtmk/dtmk_ntads_s002.do?dsId=30604)
+1. [행정표준코드관리시스템 - 법정동 코드 전체 자료](https://www.code.go.kr/stdcode/regCodeL.do)
+
 
 # 2. API 엔드포인트 목록
 
@@ -10,8 +56,31 @@
 
 특정 지역 코드를 기반으로 대기 오염 데이터를 조회합니다.  
 경로 변수: `code` (String, 필수) - 조회할 지역 코드  
-요청 예시: `GET /api/v1/arpltn-call/11110`  
+요청 예시: `GET /api/v1/arpltn-call/48170320`  
 응답: `200 OK` (성공), `404 Not Found` (해당 코드의 데이터 없음)  
+```
+{
+    "status": "Success",
+    "totalCount": 1,
+    "dataSize": 1,
+    "data": {
+        "stationName": "경상남도 진주시 정촌면",
+        "stationCode": "48170320",
+        "airQualityData": {
+            "sido": "정촌면",
+            "date": "2025-09-16 00:00:00",
+            "dataType": "daily",
+            "pm10_value": 22,
+            "so2_value": 0.004,
+            "o3_value": 0.027,
+            "co_value": 0.4,
+            "no2_value": 0.007,
+            "pm25_value": 11,
+            "khai_value": null
+        }
+    }
+}
+```
 
 #### 엔드포인트: `GET /have_station`  
 측정소가 있는 지역 코드 목록을 조회합니다.  
@@ -31,7 +100,9 @@
 + `dataType` (Optional<String>): 데이터 유형을 지정합니다. (예: DAILY, HOUR)  
 + `measurementType` (Optional<List<String>>): 측정 항목을 지정합니다. (예: so2, o3, co, pm10) 값이  하나만 있더라도 반드시 리스트(배열) 형태로 요청해야 합니다.  
 
-예시:  
+쿼리 파라미터: `page` (int, 선택, 기본값 0) - 페이지 번호  
+요청 예시: `POST /api/v1/arpltn-search/searchData?page=0`  
+요청 예시:  
 ```{JSON}
 {
     "dataType": "DAILY",
@@ -41,10 +112,41 @@
     "measurementType": ["so2", "o3"]
 }
 ```
-
-쿼리 파라미터: `page` (int, 선택, 기본값 0) - 페이지 번호  
-요청 예시: `POST /api/v1/arpltn-search/searchData?page=0`  
 응답: `200 OK` (성공), 검색 결과(페이징 포함) 반환  
+```
+{
+    "status": "Success",
+    "totalCount": 30,
+    "dataSize": 515,
+    "data": {
+        "arpltnResponseList": [
+            {
+                "stationName": "부천시",
+                "stationCode": "41190000",
+                "airQualityData": {
+                    "sido": "부천시",
+                    "date": "2025-09-17 03:00:00",
+                    "dataType": "hourly",
+                    "pm10_value": 19,
+                    "so2_value": 0.003,
+                    "o3_value": 0.023,
+                    "co_value": 0.4,
+                    "no2_value": 0.006,
+                    "pm25_value": 8,
+                    "khai_value": 39,
+                    "stationCode": "41190000"
+                }
+            },
+            {
+                "stationName": "부천시",
+                "stationCode": "41190000",
+                "airQualityData": {
+                    "sido": "부천시",
+             ---(생략)---
+        ],
+    }
+}
+```
 
 ## 2.3. 통계 데이터 수집
 ### 기본 URL: `/api/v1/arpltn-stats`  
