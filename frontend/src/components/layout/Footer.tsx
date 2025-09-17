@@ -40,7 +40,7 @@ export default function Footer() {
         )}
         <Spacer />
         {imageError ? (
-          <span>ħ ∂/∂t |Ψ(t)› = Ĥ|Ψ(t)›</span>
+          <span>ħ ∂/∂t |Ψ(t)&gt; = Ĥ|Ψ(t)&gt;</span>
         ) : (
           <Image
             src="images/schrodinger-equation.svg"

@@ -62,7 +62,7 @@ export default function SearchBox() {
       toaster.create({
         title: "검색 성공",
         description: "데이터를 성공적으로 조회했습니다.",
-        type: "info",
+        type: "success",
       });
     } catch (error) {
       console.error("API ERROR: ", error);

@@ -76,6 +76,7 @@
                 AND data_type = #{params.dataType}
             </if>
         </where>
+        ORDER BY measurement_date_time DESC, station_code ASC
         LIMIT #{startNum}, #{pageSize}
     </select>
 

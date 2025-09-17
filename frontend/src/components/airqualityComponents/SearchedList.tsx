@@ -113,30 +113,64 @@ export default function SearchedList({
                             <Text fontWeight="bold">측정일</Text>
                             <Text>{item.airQualityData.date}</Text>
 
-                            <Text fontWeight="bold">PM10 (㎍/㎥)</Text>
-                            <Text>{item.airQualityData.pm10_value}</Text>
+                            <Text fontWeight="bold">데이터 타입</Text>
+                            <Text>{item.airQualityData.dataType}</Text>
 
-                            <Text fontWeight="bold">PM2.5 (㎍/㎥)</Text>
-                            <Text>{item.airQualityData.pm25_value}</Text>
+                            {item.airQualityData.pm10_value !== null &&
+                              item.airQualityData.pm10_value !== undefined && (
+                                <>
+                                  <Text fontWeight="bold">PM10 (㎍/㎥)</Text>
+                                  <Text>{item.airQualityData.pm10_value}</Text>
+                                </>
+                              )}
 
-                            <Text fontWeight="bold">SO₂ (ppm)</Text>
-                            <Text>{item.airQualityData.so2_value}</Text>
+                            {item.airQualityData.pm25_value !== null &&
+                              item.airQualityData.pm25_value !== undefined && (
+                                <>
+                                  <Text fontWeight="bold">PM2.5 (㎍/㎥)</Text>
+                                  <Text>{item.airQualityData.pm25_value}</Text>
+                                </>
+                              )}
 
-                            <Text fontWeight="bold">O₃ (ppm)</Text>
-                            <Text>{item.airQualityData.o3_value}</Text>
+                            {item.airQualityData.so2_value !== null &&
+                              item.airQualityData.so2_value !== undefined && (
+                                <>
+                                  <Text fontWeight="bold">SO₂ (ppm)</Text>
+                                  <Text>{item.airQualityData.so2_value}</Text>
+                                </>
+                              )}
 
-                            <Text fontWeight="bold">NO₂ (ppm)</Text>
-                            <Text>{item.airQualityData.no2_value}</Text>
+                            {item.airQualityData.o3_value !== null &&
+                              item.airQualityData.o3_value !== undefined && (
+                                <>
+                                  <Text fontWeight="bold">O₃ (ppm)</Text>
+                                  <Text>{item.airQualityData.o3_value}</Text>
+                                </>
+                              )}
 
-                            <Text fontWeight="bold">CO (ppm)</Text>
-                            <Text>{item.airQualityData.co_value}</Text>
+                            {item.airQualityData.no2_value !== null &&
+                              item.airQualityData.no2_value !== undefined && (
+                                <>
+                                  <Text fontWeight="bold">NO₂ (ppm)</Text>
+                                  <Text>{item.airQualityData.no2_value}</Text>
+                                </>
+                              )}
 
-                            <Text fontWeight="bold">χ</Text>
-                            <Text>
-                              {item.airQualityData.khai_value !== null
-                                ? item.airQualityData.khai_value
-                                : "N/A"}
-                            </Text>
+                            {item.airQualityData.co_value !== null &&
+                              item.airQualityData.co_value !== undefined && (
+                                <>
+                                  <Text fontWeight="bold">CO (ppm)</Text>
+                                  <Text>{item.airQualityData.co_value}</Text>
+                                </>
+                              )}
+
+                            {item.airQualityData.khai_value !== null &&
+                              item.airQualityData.khai_value !== undefined && (
+                                <>
+                                  <Text fontWeight="bold">χ</Text>
+                                  <Text>{item.airQualityData.khai_value}</Text>
+                                </>
+                              )}
                           </Grid>
                         </VStack>
                       </Box>
@@ -145,7 +179,9 @@ export default function SearchedList({
                 </Grid>
                 {showLoadMoreButton && (
                   <Center mt={4}>
-                    <Button onClick={onLoadMore} loading={isAppending}>더보기</Button>
+                    <Button onClick={onLoadMore} loading={isAppending}>
+                      더보기
+                    </Button>
                   </Center>
                 )}
               </VStack>

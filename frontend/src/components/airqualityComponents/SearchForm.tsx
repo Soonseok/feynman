@@ -32,7 +32,7 @@ interface SearchFormProps {
 }
 
 const measurementTypes = ["pm10", "so2", "o3", "co", "no2", "pm25", "khai"];
-const dataTypes = ["", "DAILY", "HOURLY"];
+const dataTypes = ["", "DAILY", "HOURLY", "MONTHLY"];
 
 const SearchForm: React.FC<SearchFormProps> = ({ onSearch, isLoading }) => {
   const { control, handleSubmit } = useForm<SearchFormData>({

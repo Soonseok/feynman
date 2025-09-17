@@ -2,6 +2,7 @@ package dev.soon.feynman.scheduler;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.soon.feynman.arpltnStatsSvc.dao.ArpltnStatsDao;
 import dev.soon.feynman.arpltnStatsSvc.service.DailyStatsService;
 import dev.soon.feynman.arpltnStatsSvc.service.MonthlyStatsService;
 import dev.soon.feynman.arpltnStatsSvc.service.SggStatsService;
@@ -10,10 +11,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,6 +32,7 @@ public class ArpltnDataScheduler {
     private final MonthlyStatsService monthlyStatsService;
     private final SggStatsService sggStatsService;
     private final SidoStatsService sidoStatsService;
+    private final ArpltnStatsDao arpltnStatsDao;
 
     // 시도 목록을 메모리에 고정 (17개)
     private static final List<String> SIDO_NAMES = List.of(
@@ -48,28 +52,42 @@ public class ArpltnDataScheduler {
         log.info("Starting scheduled daily station stats job.");
         String fileName;
 
-        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();      // 1=월, 2=화, ..., 7=일
-        long  daysToFetch = 1;
-        if (dayOfWeek == 2) {
-            daysToFetch = 2;
-        }
-        LocalDate endDateLD = LocalDate.now().minusDays(1);
-        LocalDate startDateLD = endDateLD.minusDays(daysToFetch - 1);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String endDate = endDateLD.format(formatter);
-        String startDate = startDateLD.format(formatter);
-
-        // 요일이 홀수(월,수,금,일)이면 1조, 짝수(화,목,토)이면 2조
+        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
         if (dayOfWeek % 2 != 0) {
-            fileName = "static/api_files/arpltn/stationName1.json";
+            fileName = "/static/api_files/arpltn/stationName1.json";
         } else {
             fileName = "/static/api_files/arpltn/stationName2.json";
         }
-
         try (InputStream is = getClass().getResourceAsStream(fileName)) {
+            if (is == null) {
+                log.error("File not found: {}", fileName);
+                return;
+            }
+
             List<String> stationNames = objectMapper.readValue(is, new TypeReference<>() {});
+
             for (String station : stationNames) {
+                // 1. DB에서 해당 측정소의 마지막 데이터 날짜를 가져옵니다.
+                LocalDateTime lastDate = arpltnStatsDao.findLastMeasurementDate(station);
+                LocalDate start = (lastDate != null) ? lastDate.toLocalDate().plusDays(1) : LocalDate.now().minusMonths(1); // 데이터가 없다면 한 달 전부터 시작
+                LocalDate end = LocalDate.now().minusDays(1);
+
+                if (start.isAfter(end)) {
+                    log.info("Station {} is already up to date.", station);
+                    continue;
+                }
+
+                // 2. 누락된 날짜 범위를 계산하여 데이터를 가져옵니다.
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+                String startDate = start.format(formatter);
+                String endDate = end.format(formatter);
+
+                log.info("Fetching data for {} from {} to {}", station, startDate, endDate);
+
+                // 3. API 호출
                 dailyStatsService.getDailyStats(station, startDate, endDate);
+
+                // API 요청 지연
                 try {
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
@@ -77,7 +95,7 @@ public class ArpltnDataScheduler {
                     log.error("API call sleep was interrupted", e);
                 }
             }
-            log.info("Daily station stats job finished. Processed {} stations from file: {}", stationNames.size(), fileName);
+            log.info("Daily stats job finished. Processed {} stations from file: {}", stationNames.size(), fileName);
         } catch (IOException e) {
             log.error("Failed to read station list file: {}", fileName, e);
         }
@@ -98,7 +116,7 @@ public class ArpltnDataScheduler {
         String fileName;
         int dayOfMonth = LocalDate.now().getDayOfMonth();
         if (dayOfMonth == 1) {
-            fileName = "static/api_files/arpltn/stationName1.json";
+            fileName = "/static/api_files/arpltn/stationName1.json";
         } else {
             fileName = "/static/api_files/arpltn/stationName2.json";
         }
@@ -174,5 +192,22 @@ public class ArpltnDataScheduler {
             }
         }
         log.info("Daily sgg stats job finished.");
+    }
+
+    /**
+     * station_code 매치 스케줄러
+     */
+    @Scheduled(cron = "0 20 * * * *")
+    @Transactional
+    public void scheduleNewSidoStatsJob() {
+        log.info("Starting station code match method.");
+        try {
+            arpltnStatsDao.disableSafeUpdates(); // 안전 모드 비활성화
+            arpltnStatsDao.matchStationCode();  // 업데이트 쿼리 실행
+        } catch (Exception e) {
+            log.error("Station code matcher got a problem :", e);
+            throw e;
+        }
+        log.info("End station code match method.");
     }
 }
