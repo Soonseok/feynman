@@ -16,8 +16,8 @@ export default function Footer() {
       borderTop="1px solid"
     >
       <Center>
-        &nbsp;&nbsp;(Ↄ) 2025 Feynman. Goott by Soon &nbsp;&nbsp;
-        <Link href="https://github.com/Soonseok" target="_blank">
+        &nbsp;&nbsp;
+        <Link href="https://github.com/Soonseok/feynman" target="_blank">
           <Icon size="lg" color="gray.500">
             <svg viewBox="0 0 32 32">
               <g fill="currentColor">
@@ -26,6 +26,7 @@ export default function Footer() {
             </svg>
           </Icon>
         </Link>
+        &nbsp;&nbsp;(Ↄ) 2025 Feynman. Goott by Soon &nbsp;&nbsp;
         <Spacer />
         {imageError ? (
           <span>𓇋𓄿𓀀𓁷𓏤𓅓𓂝𓈎𓇥𓂋𓊪𓅮𓏏𓏖𓏼</span>

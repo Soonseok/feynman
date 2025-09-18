@@ -32,12 +32,12 @@ export default function SearchBox() {
       const response = await axios.post(
         "api/v1/arpltn-search/searchData",
         requestBody,
-      {
-        params: {
-          page: pageNum,
-          size: 30,
-        },
-      }
+        {
+          params: {
+            page: pageNum,
+            size: 30,
+          },
+        }
       );
       const newResult = response.data as SearchResponse;
 
@@ -95,7 +95,10 @@ export default function SearchBox() {
       margin="auto"
     >
       <Box flex="none" minW={{ base: "full", md: "40%" }}>
-        <SearchForm onSearch={(criteria) => fetchData(criteria, 0)} isLoading={isLoading} />
+        <SearchForm
+          onSearch={(criteria) => fetchData(criteria, 0)}
+          isLoading={isLoading}
+        />
       </Box>
 
       <Box flex="1" minW={{ base: "full", md: "40%" }}>

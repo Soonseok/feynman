@@ -43,7 +43,8 @@
         </where>
     </select>
 
-    <select id="getSimpleSearchedData" parameterType="java.util.Map" resultType="dev.soon.feynman.arpltnCallBack.dto.AirQualityDataWithStationCode">
+    <select id="getSimpleSearchedData" parameterType="java.util.Map"
+            resultType="dev.soon.feynman.arpltnCallBack.dto.AirQualityDataWithStationCode">
         SELECT
         station_name AS sido,
         measurement_date_time AS date,
