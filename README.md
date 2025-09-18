@@ -8,8 +8,9 @@
 
 **Backend**
 
-* Java 17
+* Java 17.0.12
 * Spring Boot 3.5.4
+* Maven 3.9.11
 * REST API
 * Mybatis (mybatis-spring-boot-starter 3.0.3)
 
@@ -22,6 +23,7 @@
 * React 19.1.1
 * TypeScript 5.8.3
 * NodeJs 22.15.0
+* npm 11.6.0
 * Axios 1.11.0
 * Vite 7.1.3
 * Chakra-UI 3.24.2
@@ -29,7 +31,7 @@
 **Infra & DevOps**
 
 * Ubuntu 22.04.5 LTS
-* Maven 3.9.11
+* Nginx 1.18.0 (Ubuntu)
 
 **경계 지도 구현**
 * 데이터 가공   
@@ -39,7 +41,7 @@ QGIS에서 .shp 파일을 GeoJSON 형식으로 변환하여 웹에서 효율적�
 * 지도 서비스 연동  
 Mapbox에 GeoJSON 데이터를 업로드하고, 웹 페이지에서 Mapbox GL JS를 통해 지도에 경계 데이터를 렌더링.
 * 최적화  
-세부적인 내용이 필요 없는 시군구 지도와 광역자치단체 지도는 ogr2ogr을 이용해 단순화(Simplification) 적용.
+세부적인 내용이 필요 없는 시군구 지도와 광역자치단체 지도는 ogr2ogr을 이용해 단순화(simplify) 적용.
 
 ## 1.2 사용 API
 1. [한국환경공단_에어코리아_대기오염통계 현황](https://www.data.go.kr/data/15073855/openapi.do)
