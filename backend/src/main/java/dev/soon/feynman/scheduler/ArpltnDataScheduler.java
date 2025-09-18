@@ -63,31 +63,24 @@ public class ArpltnDataScheduler {
                 log.error("File not found: {}", fileName);
                 return;
             }
-
             List<String> stationNames = objectMapper.readValue(is, new TypeReference<>() {});
 
             for (String station : stationNames) {
-                // 1. DB에서 해당 측정소의 마지막 데이터 날짜를 가져옵니다.
                 LocalDateTime lastDate = arpltnStatsDao.findLastMeasurementDate(station);
                 LocalDate start = (lastDate != null) ? lastDate.toLocalDate().plusDays(1) : LocalDate.now().minusMonths(1); // 데이터가 없다면 한 달 전부터 시작
                 LocalDate end = LocalDate.now().minusDays(1);
-
                 if (start.isAfter(end)) {
                     log.info("Station {} is already up to date.", station);
                     continue;
                 }
 
-                // 2. 누락된 날짜 범위를 계산하여 데이터를 가져옵니다.
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
                 String startDate = start.format(formatter);
                 String endDate = end.format(formatter);
 
                 log.info("Fetching data for {} from {} to {}", station, startDate, endDate);
-
-                // 3. API 호출
                 dailyStatsService.getDailyStats(station, startDate, endDate);
 
-                // API 요청 지연
                 try {
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
