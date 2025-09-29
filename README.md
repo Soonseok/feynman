@@ -3,6 +3,7 @@
 
 행정구역 별 대기질 조회 서비스. 행정구역의 단위는 읍면동, 시군구, 17개 광역자치단체를 지원한다.  
 2025년 3월 1일부터의 SO₂, O₃, CO, NO₂, PM10, PM2.5, KHAI 값을 제공.  
+<img width="1920" height="1789" alt="Image" src="https://github.com/user-attachments/assets/77660bb3-6673-4e0b-94b4-ed1d1e3fd7a9" />
 
 ## 1.1 기술 스택
 
