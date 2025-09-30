@@ -1,5 +1,5 @@
 // GeoserverTest.tsx (최종 완성 코드)
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS";
