@@ -8,9 +8,9 @@ interface Props {
 
 export default function MapChooseRadioBtn({ mapType, setMapType }: Props) {
   const items: { label: string; value: MapType }[] = [
-    { label: "시군구 지도", value: "sgg" },
-    { label: "읍면동 지도", value: "umd" },
-    { label: "광역자치단체 지도", value: "sid" },
+    { label: "시군구 지도", value: "ne:sigungu" },
+    { label: "읍면동 지도", value: "ne:umd" },
+    { label: "광역자치단체 지도", value: "ne:sido" },
   ];
 
   return (

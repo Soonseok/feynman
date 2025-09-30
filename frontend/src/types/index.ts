@@ -1,3 +1,3 @@
 export * from './airQuality';
 export * from './map';
-export type MapType = "sgg" | "umd" | "sid";
+export type MapType = "ne:sigungu" | "ne:umd" | "ne:sido";

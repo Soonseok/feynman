@@ -36,7 +36,7 @@ export default function BoundaryMapPage() {
               typeof code === "string" && code.length > 0
           )
           .map((code: string) => {
-            if (mapType === "sgg") {
+            if (mapType === "ne:sigungu") {
               // 코드가 8자리이고, 뒤 3자리가 '000'인 경우만 5자리로 변환
               if (code.length === 8 && code.slice(-3) === "000") {
                 return code.substring(0, 5);
@@ -57,7 +57,7 @@ export default function BoundaryMapPage() {
   useEffect(() => {
     const infoToFetch = fixedHoverInfo || hoverInfo;
     let currentCode = infoToFetch?.feature?.properties?.A1;
-    if (mapType === "sgg" && currentCode && currentCode.length === 5) {
+    if (mapType === "ne:sigungu" && currentCode && currentCode.length === 5) {
       currentCode = `${currentCode}000`;
     }
     if (!currentCode || currentCode === prevCodeRef.current) {

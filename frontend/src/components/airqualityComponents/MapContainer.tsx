@@ -1,3 +1,4 @@
+// MapContainer.tsx
 import Map, {
   Layer,
   Source,
@@ -21,7 +22,7 @@ const SGG_ID = import.meta.env.VITE_SIGU_TILESET_ID;
 const SIDO_ID = import.meta.env.VITE_SIDO_TILESET_ID;
 
 interface MapContainerProps {
-  mapType: "sgg" | "umd" | "sid";
+  mapType: "ne:sigungu" | "ne:umd" | "ne:sido";
   viewport: { latitude: number; longitude: number; zoom: number };
   onViewportChange: (vp: {
     latitude: number;
