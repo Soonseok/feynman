@@ -39,6 +39,8 @@ const defaultVectorStyle = new Style({
   }),
 });
 
+const MAX_FEATURES = 5000;
+
 export default function GeoMapViewer({ mapType }: GeoMapViewerProps) {
   const olMapRef = useRef<Map | null>(null);
   const [mapElement, setMapElement] = useState<HTMLDivElement | null>(null);
@@ -89,7 +91,7 @@ export default function GeoMapViewer({ mapType }: GeoMapViewerProps) {
       strategy: bbox, 
       url: (extent, resolution, projection) => {
             const typeName = initialMapType;
-            return `http://localhost:8080/geoserver/ne/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${typeName}&outputFormat=application/json&srsName=EPSG:5186&bbox=${extent.join(',')},${projection.getCode()}`;
+            return `http://localhost:8080/geoserver/ne/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${typeName}&outputFormat=application/json&srsName=EPSG:5186&maxFeatures=${MAX_FEATURES}&bbox=${extent.join(',')},${projection.getCode()}`;
         },
     });
 

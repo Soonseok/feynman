@@ -7,7 +7,7 @@ import SearchBox from "../components/layout/SearchBox";
 import GeoMapViewer from "./GeoMapViewer";
 
 export default function BoundaryMapPage() {
-  const [mapType, setMapType] = useState<MapType>("ne:sido");
+  const [mapType, setMapType] = useState<MapType>("ne:umd");
   return (
     <VStack justifyContent={"center"} minH="100vh">
       <Heading fontSize={"2rem"} paddingTop={5} mb={4}>
